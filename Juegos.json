@@ -1,0 +1,7 @@
+[
+    {"titulo": "Hollow Knight", "genero": "Metroidvania", "estudio": "Team Cherry", "rating": 9.5},
+    {"titulo": "Celeste", "genero": "Plataformas", "estudio": "Maddy Makes Games", "rating": 9.2},
+    {"titulo": "Dead Cells", "genero": "Roguelike", "estudio": "Motion Twin", "rating": 8.9},
+    {"titulo": "Ori and the Blind Forest", "genero": "Metroidvania", "estudio": "Moon Studios", "rating": 9.3},
+    {"titulo": "Hades", "genero": "Roguelike", "estudio": "Supergiant Games", "rating": 9.8}
+]
