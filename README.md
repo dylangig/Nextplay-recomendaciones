@@ -16,7 +16,9 @@ El proyecto resuelve el problema de los jugadores que terminan un videojuego y n
 ## 2. Integrantes del Equipo
 
 Dylan Gigena Diaz
+
 Nicolás Costantini
+
 Franco Steg
 
 ---
@@ -31,7 +33,7 @@ Franco Steg
 
 1. Clonar el repositorio:
    ```bash
-   git clone [https://github.com/dylangig/Nextplay-recomendaciones](https://github.com/dylangig/Nextplay-recomendaciones)
+   git clone https://github.com/dylangig/Nextplay-recomendaciones
    cd NextPlay-Recomendaciones
 2. Verificar los datos de prueba:
 Asegurate de que el archivo juegos.json se encuentre en la carpeta datos/ (o en la misma carpeta que main.py).
@@ -40,7 +42,6 @@ Ejecutar la aplicacion desde la terminal:
 python main.py
 
 
-###
-Estado actual :
+### Estado actual :
 TP 1 - Objetos y clases: Modelo e interfaz inicial.
 
