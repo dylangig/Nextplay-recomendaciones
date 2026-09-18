@@ -1,24 +1,17 @@
 import csv
 import gc
-import json
 import math
 import sys
 import time
 from statistics import median
 
-from Main import Videojuego
 from estrategias import busqueda_binaria, busqueda_lineal, preparar_indice_binario
+from generar_datos import generar_catalogo
 
 TAMANOS = [100, 1000, 10000, 100000, 1000000]
 PRESUPUESTO = 1_000_000
 REPETICIONES = 5
 TITULO_INEXISTENTE = "zzzzzz_inexistente"
-
-
-def cargar_catalogo(ruta):
-    with open(ruta, "r", encoding="utf-8") as archivo:
-        datos = json.load(archivo)
-    return [Videojuego(d["titulo"], d["genero"], d["estudio"], d["rating"]) for d in datos]
 
 
 def tiempo_lote(funcion, argumentos, consultas):
@@ -38,7 +31,7 @@ def medir(funcion, argumentos, costo_estimado):
 
 
 def ejecutar(tamano):
-    catalogo = cargar_catalogo(f"datos_{tamano}.json")
+    catalogo = generar_catalogo(tamano)
     titulos = [juego.get_titulo() for juego in catalogo]
     catalogo_ordenado, titulos_ordenados = preparar_indice_binario(catalogo)
     log_n = max(1, math.log2(tamano))
