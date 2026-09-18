@@ -6,7 +6,7 @@ random.seed(42)
 GENEROS = ["Metroidvania", "Plataformas", "Roguelike", "Shooter", "RPG", "Estrategia", "Puzzle", "Deportes"]
 ESTUDIOS = ["Team Cherry", "Supergiant Games", "Motion Twin", "Moon Studios", "Maddy Makes Games", "Valve", "Bethesda", "Nintendo"]
 
-TAMANOS = [100, 1000, 10000, 100000]
+TAMANOS = [100, 1000, 10000]
 
 
 def generar_catalogo(cantidad):
