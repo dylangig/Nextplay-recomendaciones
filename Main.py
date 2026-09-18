@@ -1,5 +1,8 @@
 import json
+import os
 import sys
+
+from estrategias import busqueda_binaria, preparar_indice_binario
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -63,12 +66,15 @@ class Catalogo:
 class SistemaUI:
     def __init__(self, catalogo):
         self._catalogo = catalogo
+        self._catalogo_ordenado = None
+        self._titulos_ordenados = None
 
     def mostrar_menu(self):
         print("         NEXTPLAY — TERMINAL          ")
         print("1. Buscar videojuego por título")
         print("2. Filtrar videojuegos por género")
         print("3. Listar todos los videojuegos")
+        print("4. Buscar por título (búsqueda binaria)")
         print("0. Salir")
 
 
@@ -96,6 +102,16 @@ class SistemaUI:
                 else:
                     print("\n No hay juegos de ese género.\n")
 
+            elif opcion == '4':
+                if self._titulos_ordenados is None:
+                    self._catalogo_ordenado, self._titulos_ordenados = preparar_indice_binario(self._catalogo.listar_todos())
+                titulo = input("> Ingresá el título a buscar: ")
+                resultado = busqueda_binaria(self._catalogo_ordenado, self._titulos_ordenados, titulo)
+                if resultado:
+                    print(f"\n Juego encontrado: {resultado}\n")
+                else:
+                    print("\n Juego no encontrado.\n")
+
             elif opcion == '3':
                 print("\n Catálogo completo:")
                 for j in self._catalogo.listar_todos():
@@ -112,7 +128,8 @@ class SistemaUI:
 
 if __name__ == "__main__":
     mi_catalogo = Catalogo()
-    mi_catalogo.cargar_desde_json('juegos.json')
+    ruta_catalogo = 'juegos.json' if os.path.exists('juegos.json') else 'Juegos.json'
+    mi_catalogo.cargar_desde_json(ruta_catalogo)
 
     app = SistemaUI(mi_catalogo)
     app.iniciar()
