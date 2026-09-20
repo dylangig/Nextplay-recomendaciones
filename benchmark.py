@@ -1,4 +1,3 @@
-import csv
 import gc
 import math
 import sys
@@ -69,20 +68,10 @@ def mostrar(registros):
     print()
 
 
-def guardar_csv(registros, ruta):
-    claves = ["tamano", "lineal_mejor", "lineal_promedio", "lineal_peor", "lineal_ausente", "binaria", "ordenamiento"]
-    with open(ruta, "w", encoding="utf-8", newline="") as archivo:
-        escritor = csv.DictWriter(archivo, fieldnames=claves)
-        escritor.writeheader()
-        escritor.writerows(registros)
-    print(f"Resultados guardados en {ruta}")
-
-
 def main():
     tamanos = [int(t) for t in sys.argv[1:]] or TAMANOS
     registros = [ejecutar(tamano) for tamano in tamanos]
     mostrar(registros)
-    guardar_csv(registros, "resultados.csv")
 
 
 if __name__ == "__main__":

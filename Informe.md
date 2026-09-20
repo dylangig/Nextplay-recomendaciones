@@ -56,7 +56,7 @@ Los valores son **segundos por consulta individual** (excepto la columna de orde
 | 100.000  | ≈0             | 0,005334       | 0,009897       | 0,008817         | 0,000004      | 0,097969                 |
 | 1.000.000| ≈0             | 0,052015       | 0,114923       | 0,094450         | 0,000004      | 1,566838                 |
 
-*(Los mismos valores están en `resultados.csv`.)*
+
 
 ## 6. Análisis de resultados
 
