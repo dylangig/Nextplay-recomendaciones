@@ -9,7 +9,7 @@ Resolver una misma necesidad crítica del sistema —*encontrar un videojuego po
 ### Estrategia A — Búsqueda lineal (secuencial)
 Recorre el catálogo comparando el título buscado contra cada elemento, uno por uno. Es la que ya usaba `Catalogo.buscar_por_titulo`. No exige ningún orden ni estructura previa.
 
-- Se implementa en `estrategias.py::busqueda_lineal`.
+- Se implementa en `algoritmos/busqueda.py::busqueda_lineal`.
 - **Mejor caso Ω(1):** el título coincide con el primer elemento.
 - **Caso promedio Θ(n):** en promedio recorre n/2 posiciones.
 - **Peor caso O(n):** el título es el último o no existe (recorre todo).
@@ -17,8 +17,8 @@ Recorre el catálogo comparando el título buscado contra cada elemento, uno por
 ### Estrategia B — Búsqueda binaria
 Requiere que el catálogo esté **ordenado por título**. Compara el título buscado contra el elemento del medio y descarta la mitad restante en cada comparación.
 
-- Índice: `estrategias.py::preparar_indice_binario` ordena el catálogo una vez (Timsort, O(n log n)).
-- Se implementa en `estrategias.py::busqueda_binaria`.
+- Índice: `algoritmos/busqueda.py::preparar_indice_binario` ordena el catálogo una vez (Timsort, O(n log n)).
+- Se implementa en `algoritmos/busqueda.py::busqueda_binaria`.
 - **Mejor caso Ω(1):** el título coincide con el elemento medio en la primera comparación.
 - **Caso promedio Θ(log n):** en n = 1.000.000 bastan ≈ 20 comparaciones.
 - **Peor caso O(log n):** la búsqueda siempre reduce el espacio a la mitad.
@@ -35,8 +35,8 @@ Requiere que el catálogo esté **ordenado por título**. Compara el título bus
 
 ## 4. Metodología de medición
 
-- **Datos:** `generar_datos.py` genera catálogos con títulos únicos y desordenados de 100, 1.000, 10.000, 100.000 y 1.000.000 de juegos (formato idéntico a `Juegos.json`).
-- **Instrumento:** `benchmark.py` usa `time.perf_counter()`; toma la **mediana de 5 rondas**; cada ronda ejecuta un lote de consultas proporcional al costo estimado (para mantener constante el volumen de trabajo) y desactiva el *garbage collector* durante la medición.
+- **Datos:** `algoritmos/generar_datos.py` genera catálogos con títulos únicos y desordenados de 100, 1.000, 10.000, 100.000 y 1.000.000 de juegos (formato idéntico a `datos/juegos.json`).
+- **Instrumento:** `tests/benchmark.py` usa `time.perf_counter()`; toma la **mediana de 5 rondas**; cada ronda ejecuta un lote de consultas proporcional al costo estimado (para mantener constante el volumen de trabajo) y desactiva el *garbage collector* durante la medición.
 - **Escenarios por tamaño:**
   - *Mejor caso:* buscar el primer título del catálogo.
   - *Promedio:* buscar el título de la posición central (n/2 comparaciones).

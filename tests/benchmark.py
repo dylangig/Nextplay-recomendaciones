@@ -4,8 +4,8 @@ import sys
 import time
 from statistics import median
 
-from estrategias import busqueda_binaria, busqueda_lineal, preparar_indice_binario
-from generar_datos import generar_catalogo
+from algoritmos.busqueda import busqueda_binaria, busqueda_lineal, preparar_indice_binario
+from algoritmos.generar_datos import generar_catalogo
 
 TAMANOS = [100, 1000, 10000, 100000, 1000000]
 PRESUPUESTO = 1_000_000
