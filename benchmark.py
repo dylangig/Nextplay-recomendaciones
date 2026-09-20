@@ -5,7 +5,7 @@ import sys
 import time
 from statistics import median
 
-from estrategias import busqueda_binaria, busqueda_lineal, preparar_indice_binario
+from estrategias import busqueda_arbol, busqueda_binaria, busqueda_lineal, construir_arbol, preparar_indice_binario
 from generar_datos import generar_catalogo
 
 TAMANOS = [100, 1000, 10000, 100000, 1000000]
@@ -43,10 +43,16 @@ def ejecutar(tamano):
 
     t_binaria = medir(busqueda_binaria, (catalogo_ordenado, titulos_ordenados, titulos_ordenados[tamano // 2]), log_n)
 
+    arbol = construir_arbol(catalogo)
+    t_arbol = medir(busqueda_arbol, (arbol, titulos_ordenados[tamano // 2]), log_n)
+
     gc.disable()
     inicio = time.perf_counter()
     preparar_indice_binario(catalogo)
     t_ordenamiento = time.perf_counter() - inicio
+    inicio = time.perf_counter()
+    construir_arbol(catalogo)
+    t_construccion_arbol = time.perf_counter() - inicio
     gc.enable()
 
     return {
@@ -56,13 +62,15 @@ def ejecutar(tamano):
         "lineal_peor": t_lineal_peor,
         "lineal_ausente": t_lineal_ausente,
         "binaria": t_binaria,
+        "arbol": t_arbol,
         "ordenamiento": t_ordenamiento,
+        "construccion_arbol": t_construccion_arbol,
     }
 
 
 def mostrar(registros):
-    encabezado = ["tamano", "lineal_mejor", "lineal_promedio", "lineal_peor", "lineal_ausente", "binaria", "ordenamiento"]
-    print(f"\n{'tamano':>12} {'lineal_mejor':>14} {'lineal_promedio':>15} {'lineal_peor':>13} {'lineal_ausente':>15} {'binaria':>12} {'ordenamiento':>14}")
+    encabezado = ["tamano", "lineal_mejor", "lineal_promedio", "lineal_peor", "lineal_ausente", "binaria", "arbol", "ordenamiento", "construccion_arbol"]
+    print(f"\n{'tamano':>12} {'lineal_mejor':>14} {'lineal_promedio':>15} {'lineal_peor':>13} {'lineal_ausente':>15} {'binaria':>12} {'arbol':>14} {'ordenamiento':>14} {'construccion_arbol':>20}")
     for registro in registros:
         fila = " ".join(f"{registro[clave]:>15.6f}" if clave != "tamano" else f"{registro[clave]:>12}" for clave in encabezado)
         print(fila)
@@ -70,7 +78,7 @@ def mostrar(registros):
 
 
 def guardar_csv(registros, ruta):
-    claves = ["tamano", "lineal_mejor", "lineal_promedio", "lineal_peor", "lineal_ausente", "binaria", "ordenamiento"]
+    claves = ["tamano", "lineal_mejor", "lineal_promedio", "lineal_peor", "lineal_ausente", "binaria", "arbol", "ordenamiento", "construccion_arbol"]
     with open(ruta, "w", encoding="utf-8", newline="") as archivo:
         escritor = csv.DictWriter(archivo, fieldnames=claves)
         escritor.writeheader()

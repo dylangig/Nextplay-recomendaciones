@@ -44,4 +44,6 @@ python main.py
 
 ### Estado actual :
 TP 1 - Objetos y clases: Modelo e interfaz inicial.
+TP 2 - Búsqueda por título: estrategias secuencial, binaria y ordenamiento (benchmark + informe).
+TP 3 - Árbol binario de búsqueda: búsqueda ordenada por título con alta/baja dinámica y recorridos (inorden para listar, preorden para guardar, postorden para vaciar), integrado al menú y medido contra el TP2.
 

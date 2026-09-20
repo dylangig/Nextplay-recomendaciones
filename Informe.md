@@ -1,8 +1,8 @@
-# Informe — NextPlay: Búsqueda por título con dos estrategias
+# Informe — NextPlay: Búsqueda por título con tres estrategias
 
 ## 1. Objetivo
 
-Resolver una misma necesidad crítica del sistema —*encontrar un videojuego por su título*— con al menos dos estrategias distintas, medir su comportamiento con distintos tamaños de entrada y analizar su complejidad usando notación Ω, Θ y O.
+Resolver una misma necesidad crítica del sistema —*encontrar un videojuego por su título*— con al menos tres estrategias distintas, medir su comportamiento con distintos tamaños de entrada y analizar su complejidad usando notación Ω, Θ y O. La tercera estrategia, un **árbol binario de búsqueda**, agrega además alta/baja de juegos en tiempo logarítmico, un requerimiento que la búsqueda binaria sobre arreglo ordenado no puede sostener.
 
 ## 2. Estrategias implementadas
 
@@ -22,52 +22,73 @@ Requiere que el catálogo esté **ordenado por título**. Compara el título bus
 - **Mejor caso Ω(1):** el título coincide con el elemento medio en la primera comparación.
 - **Caso promedio Θ(log n):** en n = 1.000.000 bastan ≈ 20 comparaciones.
 - **Peor caso O(log n):** la búsqueda siempre reduce el espacio a la mitad.
+- **Limitación:** todo cambio del catálogo (alta o baja) exige re-ordenar o desplazar elementos, O(n), además de re-indexar.
+
+### Estrategia C — Árbol binario de búsqueda
+Mantiene los juegos en un **ABB ordenado por título** (clave en minúsculas), implementado en `arbol.py`. La búsqueda recorre la raíz y decide ir a la izquierda o a la derecha según la comparación, recorriendo la altura del árbol.
+
+- Construcción: `estrategias.py::construir_arbol` inserta los juegos uno a uno.
+- Búsqueda: `estrategias.py::busqueda_arbol` → `ArbolBinario.buscar`.
+- **Alta/baja dinámicas:** `insertar` y `eliminar` (impares: sin hijos, un hijo, dos hijos con sucesor inorden) en tiempo igual que la búsqueda.
+- **Recorridos usados como funcionalidad real:**
+  - *inorden* → listar el catálogo en orden alfabético (`Menu 6`).
+  - *preorden* → serializar/guardar el catálogo a archivo para reconstruir el mismo árbol (`Menu 9`).
+  - *postorden* → vaciar el catálogo liberando hijos antes que padres (`Menu 10`).
+- **Mejor caso Ω(1):** el título coincide con la raíz.
+- **Caso promedio Θ(log n):** con inserción en orden aleatorio el árbol queda balanceado en expectativa (altura ≈ log₂ n).
+- **Peor caso O(n):** con inserciones en orden ascendente el árbol degenera en lista enlazada.
 
 ## 3. Análisis de complejidad
 
-| Estrategia               | Ω (mejor)   | Θ (promedio) | O (peor)    |
-|--------------------------|-------------|--------------|-------------|
-| Búsqueda lineal          | Ω(1)        | Θ(n)         | O(n)        |
-| Búsqueda binaria         | Ω(1)        | Θ(log n)     | O(log n)    |
-| Ordenamiento previo (*)  | Ω(n)        | Θ(n log n)   | O(n log n)  |
+| Operación                      | Ω (mejor) | Θ (promedio) | O (peor)   |
+|--------------------------------|-----------|--------------|------------|
+| Búsqueda lineal                | Ω(1)      | Θ(n)         | O(n)       |
+| Búsqueda binaria               | Ω(1)      | Θ(log n)     | O(log n)   |
+| Búsqueda en árbol              | Ω(1)      | Θ(log n)     | O(n) (*)   |
+| Inserción en árbol             | Ω(1)      | Θ(log n)     | O(n) (*)   |
+| Eliminación en árbol           | Ω(1)      | Θ(log n)     | O(n) (*)   |
+| Recorrido inorder/preorder/postorder | Θ(n) | Θ(n)         | Θ(n)       |
+| Ordenamiento previo (única vez)| Ω(n)      | Θ(n log n)   | O(n log n) |
+| Construcción del árbol (única) | Ω(n)      | Θ(n log n)   | O(n²)(*)   |
 
-(*) Solo requerido por la estrategia binaria. En Python el ordenamiento usa Timsort, cuyo mejor caso sobre datos ya ordenados es Ω(n).
+(*) Peor caso del ABB sin balancear: si los títulos se insertan ordenados, el árbol degenera en lista y todas las operaciones pasan a O(n). Un árbol autobalanceado (AVL) garantiza O(log n) también en el peor caso.
 
 ## 4. Metodología de medición
 
-- **Datos:** `generar_datos.py` genera catálogos con títulos únicos y desordenados de 100, 1.000, 10.000, 100.000 y 1.000.000 de juegos (formato idéntico a `Juegos.json`).
-- **Instrumento:** `benchmark.py` usa `time.perf_counter()`; toma la **mediana de 5 rondas**; cada ronda ejecuta un lote de consultas proporcional al costo estimado (para mantener constante el volumen de trabajo) y desactiva el *garbage collector* durante la medición.
+- **Datos:** `generar_datos.py` genera catálogos con títulos únicos y desordenados (orden aleatorio) de 100 a 1.000.000 de juegos —por eso el ABB resultante queda equilibrado en la práctica—.
+- **Instrumento:** `benchmark.py` usa `time.perf_counter()`; toma la **mediana de 5 rondas**; cada ronda ejecuta un lote de consultas proporcional al costo estimado y desactiva el *garbage collector* durante la medición.
 - **Escenarios por tamaño:**
   - *Mejor caso:* buscar el primer título del catálogo.
-  - *Promedio:* buscar el título de la posición central (n/2 comparaciones).
+  - *Promedio:* buscar el título de la posición central.
   - *Peor caso:* buscar el último título.
-  - *No encontrado:* buscar un título inexistente (peor caso real de la lineal).
-  - *Ordenamiento:* tiempo de preparar el índice binario una sola vez.
+  - *No encontrado:* buscar un título inexistente.
+  - *Pagos únicos:* `ordenamiento` (índice binario) y `construccion_arbol` (n inserciones).
 
-Los valores son **segundos por consulta individual** (excepto la columna de ordenamiento, que es un pago único al construir el índice).
+Los valores son **segundos por consulta individual** (las dos últimas columnas son pagos únicos al construir cada índice).
 
 ## 5. Resultados
 
-| Tamaño   | Lineal (mejor) | Lineal (prom.) | Lineal (peor) | Lineal (ausente) | Binaria       | Ordenamiento (única vez) |
-|----------|----------------|----------------|----------------|------------------|---------------|--------------------------|
-| 100      | ≈0             | 0,000005       | 0,000008       | 0,000009         | 0,000001      | 0,000048                 |
-| 1.000    | ≈0             | 0,000041       | 0,000085       | 0,000077         | 0,000001      | 0,000347                 |
-| 10.000   | ≈0             | 0,000578       | 0,001083       | 0,000851         | 0,000002      | 0,005830                 |
-| 100.000  | ≈0             | 0,005334       | 0,009897       | 0,008817         | 0,000004      | 0,097969                 |
-| 1.000.000| ≈0             | 0,052015       | 0,114923       | 0,094450         | 0,000004      | 1,566838                 |
+| Tamaño   | Lineal (mejor) | Lineal (prom.) | Lineal (peor) | Lineal (ausente) | Binaria | Árbol  | Ordenamiento (única) | Construcción árbol (única) |
+|----------|----------------|----------------|----------------|------------------|---------|--------|----------------------|----------------------------|
+| 100      | ≈0             | 0,000008       | 0,000018       | 0,000013         | 0,000001| 0,000001| 0,000136            | 0,000208                   |
+| 1.000    | ≈0             | 0,000078       | 0,000153       | 0,000159         | 0,000003| 0,000001| 0,000459            | 0,001242                   |
+| 10.000   | ≈0             | 0,000609       | 0,001361       | 0,001127         | 0,000002| 0,000001| 0,007686            | 0,023762                   |
+| 100.000  | ≈0             | 0,014348       | 0,028095       | 0,027358         | 0,000002| 0,000001| 0,083882            | 0,371207                   |
+| 1.000.000| ≈0             | 0,199569       | 0,409817       | 0,450176         | 0,000004| 0,000004| 2,389559            | 9,494401                   |
 
 *(Los mismos valores están en `resultados.csv`.)*
 
 ## 6. Análisis de resultados
 
-- **La búsqueda lineal crece proporcionalmente con n.** Entre 1.000 y 1.000.000 de elementos el peor caso pasa de 0,000085 s a 0,115 s: **×1.350** de tiempo para **×1.000** de datos. Es el comportamiento O(n) esperado: 10x datos ≈ 10x tiempo.
-- **La búsqueda binaria es prácticamente constante.** Se mantiene entre 1 y 4 microsegundos en todo el rango, porque sus ≈log₂(n) comparaciones pasan de ~7 (n=100) a ~20 (n=1.000.000). Empíricamente confirma Θ(log n).
-- **Aceleración en el peor caso:** con 1.000.000 de elementos, la binaria es ≈ **28.700 veces más rápida** que la lineal (0,115 s vs. 0,000004 s por consulta).
-- **Costo del ordenamiento:** crece más que lineal (típico n log n: de 48 µs a 1,57 s) pero es un **pago único**; se amortiza desde la primera búsqueda en catálogos grandes.
+- **La búsqueda lineal crece proporcionalmente con n.** Entre 1.000 y 1.000.000 de elementos el peor caso pasa de 0,000153 s a 0,410 s: Es el comportamiento O(n) esperado.
+- **Binaria y árbol son prácticamente constantes** en el rango medido (1 a 4 µs): sus ≈log₂(n) comparaciones pasan de ~7 (n=100) a ~20 (n=1.000.000). Empíricamente ambas confirman Θ(log n) en promedio; el árbol no degrada porque el dato de entrada llega desordenado.
+- **El árbol empata a la binaria en búsqueda** (ambas recorren una rama de log n nodos) pero **agrega tres ventajas que el arreglo no tiene**: alta y baja en O(log n) sin re-ordenar todo, listado alfabético sin sort adicional (inorden) y serialización pensada para reconstruir la misma estructura (preorden).
+- **Costo de construcción:** insertar n títulos (9,49 s en 1M) es más caro que el Ordenamiento de Timsort (2,39 s). Es un **pago único** y se amortiza cuando el catálogo cambia a menudo: cada alta/baja incremental es ~µs, contra O(n) del arreglo ordenado.
+- **Peor caso teórico del ABB:** si los títulos se dieran de alta en orden alfabético, el árbol degeneraría en lista y la búsqueda pasaría a O(n). El benchmark no lo muestra porque los datos de entrada están desordenados.
 
 ## 7. Conclusión
 
-- **Catálogos pequeños (≤ 1.000):** ambas estrategias son indistinguibles en la práctica; la lineal conviene por simplicidad y por no exigir orden.
-- **Catálogos grandes y con muchas consultas (caso típico de un sistema de recomendación):** la **búsqueda binaria es claramente superior**. El ordenamiento único O(n log n) se amortiza en segundos.
-- **Limitación de la binaria:** exige mantener el catálogo ordenado. Si el sistema cambia de juegos con mucha frecuencia (altas/bajas constantes), cada modificación cuesta O(n) (insertar y mantener orden) y puede convenir la lineal o un índice por tabla de hash (O(1) promedio, a considerar como tercera estrategia).
-- **Recomendación:** adoptar la búsqueda binaria sobre un catálogo ordenado como operación estándar de búsqueda por título, manteniendo la lineal solo como respaldo ante errores o catálogos en construcción.
+- **Catálogos pequeños (≤ 1.000) y sin actualizaciones:** la lineal conviene por simplicidad y por no exigir estructura.
+- **Catálogos grandes y estáticos:** binaria sobre arreglo ordenado es la más simple y el ordenamiento único se amortiza.
+- **Catálogos grandes y dinámicos (altas/bajas constantes):** el **árbol binario de búsqueda es la estrategia superior**, porque mantiene búsqueda O(log n) promedio y además permite insertar, eliminar y listar en orden sin el costo O(n) de re-ordenar el arreglo por cada cambio. Este era exactamente el vacío del TP2.
+- **Evolución recomendada:** sustituir el ABB por un **AVL**, que con rotaciones garantiza O(log n) también en el peor caso, eliminando la degeneración que sufre el árbol simple con inserciones ordenadas.
