@@ -1,6 +1,6 @@
 import random
 
-from Main import Videojuego
+from modelos.videojuego import Videojuego
 
 random.seed(42)
 
