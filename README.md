@@ -75,3 +75,4 @@ Nextplay-recomendaciones/
 ### Estado actual :
 TP 1 - Objetos y clases: Modelo e interfaz inicial.
 TP 2 - Estrategias de busqueda: lineal vs binaria con benchmark e informe.
+TP 3- Implemetancion de Arbol de busqueda
