@@ -24,5 +24,7 @@ def busqueda_binaria(catalogo_ordenado, titulos_ordenados, titulo):
 
 def preparar_indice_binario(catalogo):
     catalogo_ordenado = sorted(catalogo, key=lambda juego: juego.get_titulo().lower())
-    titulos_ordenados = [juego.get_titulo().lower() for juego in catalogo_ordenado]
+    titulos_ordenados = []
+    for juego in catalogo_ordenado:
+        titulos_ordenados.append(juego.get_titulo().lower())
     return catalogo_ordenado, titulos_ordenados

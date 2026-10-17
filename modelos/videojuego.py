@@ -11,6 +11,9 @@ class Videojuego:
     def get_genero(self):
         return self.__genero
 
+    def get_estudio(self):
+        return self.__estudio
+
     def get_rating(self):
         return self.__rating
 

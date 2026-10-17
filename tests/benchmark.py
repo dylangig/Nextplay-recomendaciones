@@ -2,7 +2,10 @@ import gc
 import math
 import sys
 import time
+from pathlib import Path
 from statistics import median
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from algoritmos.busqueda import busqueda_binaria, busqueda_lineal, preparar_indice_binario
 from algoritmos.generar_datos import generar_catalogo
@@ -25,13 +28,17 @@ def tiempo_lote(funcion, argumentos, consultas):
 
 def medir(funcion, argumentos, costo_estimado):
     consultas = max(1, int(PRESUPUESTO // max(1, costo_estimado)))
-    muestras = [tiempo_lote(funcion, argumentos, consultas) for _ in range(REPETICIONES)]
+    muestras = []
+    for _ in range(REPETICIONES):
+        muestras.append(tiempo_lote(funcion, argumentos, consultas))
     return median(muestras)
 
 
 def ejecutar(tamano):
     catalogo = generar_catalogo(tamano)
-    titulos = [juego.get_titulo() for juego in catalogo]
+    titulos = []
+    for juego in catalogo:
+        titulos.append(juego.get_titulo())
     catalogo_ordenado, titulos_ordenados = preparar_indice_binario(catalogo)
     log_n = max(1, math.log2(tamano))
 
@@ -63,14 +70,26 @@ def mostrar(registros):
     encabezado = ["tamano", "lineal_mejor", "lineal_promedio", "lineal_peor", "lineal_ausente", "binaria", "ordenamiento"]
     print(f"\n{'tamano':>12} {'lineal_mejor':>14} {'lineal_promedio':>15} {'lineal_peor':>13} {'lineal_ausente':>15} {'binaria':>12} {'ordenamiento':>14}")
     for registro in registros:
-        fila = " ".join(f"{registro[clave]:>15.6f}" if clave != "tamano" else f"{registro[clave]:>12}" for clave in encabezado)
-        print(fila)
+        celdas = []
+        for clave in encabezado:
+            if clave == "tamano":
+                celdas.append(f"{registro[clave]:>12}")
+            else:
+                celdas.append(f"{registro[clave]:>15.6f}")
+        print(" ".join(celdas))
     print()
 
 
 def main():
-    tamanos = [int(t) for t in sys.argv[1:]] or TAMANOS
-    registros = [ejecutar(tamano) for tamano in tamanos]
+    tamanos = []
+    for argumento in sys.argv[1:]:
+        tamanos.append(int(argumento))
+    if not tamanos:
+        tamanos = TAMANOS
+
+    registros = []
+    for tamano in tamanos:
+        registros.append(ejecutar(tamano))
     mostrar(registros)
 
 

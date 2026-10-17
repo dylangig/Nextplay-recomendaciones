@@ -71,3 +71,85 @@ Los valores son **segundos por consulta individual** (excepto la columna de orde
 - **Catálogos grandes y con muchas consultas (caso típico de un sistema de recomendación):** la **búsqueda binaria es claramente superior**. El ordenamiento único O(n log n) se amortiza en segundos.
 - **Limitación de la binaria:** exige mantener el catálogo ordenado. Si el sistema cambia de juegos con mucha frecuencia (altas/bajas constantes), cada modificación cuesta O(n) (insertar y mantener orden) y puede convenir la lineal o un índice por tabla de hash (O(1) promedio, a considerar como tercera estrategia).
 - **Recomendación:** adoptar la búsqueda binaria sobre un catálogo ordenado como operación estándar de búsqueda por título, manteniendo la lineal solo como respaldo ante errores o catálogos en construcción.
+
+## 8. El árbol también puede enfermarse: desbalance y AVL
+
+### 8.1 El problema: el BST no se balancea solo
+
+El árbol binario de búsqueda (BST) de la estrategia anterior (`algoritmos/arbol.py`) ofrece búsqueda en O(log n) **solo si el árbol está balanceado**. Pero un BST común no impone ninguna condición de forma: el orden de inserción decide la altura.
+
+Si los datos llegan **ya ordenados** (por ejemplo, insertar títulos en orden alfabético), cada clave nueva es mayor que todas las anteriores y se encadena siempre a la derecha. El resultado deja de ser un árbol y degenera en una **lista enlazada**: altura = n − 1, y cada búsqueda recorre hasta n nodos. Es el caso patológico que motiva esta sección.
+
+### 8.2 La solución: árbol AVL
+
+Un **árbol AVL** (`algoritmos/arbol_avl.py`) es un BST que mantiene como invariante que, en cada nodo, la diferencia de altura entre subárbol derecho e izquierdo (el *factor de balance*) nunca supera 1 en valor absoluto. Tras cada inserción o eliminación se recalcula la altura y, si algún nodo se desbalancea, se aplica una **rotación** que reorganiza ese subárbol sin romper el orden inorden (la propiedad BST se conserva).
+
+Se implementan las cuatro rotaciones clásicas:
+
+| Situación (según factor de balance) | Rotación |
+|---|---|
+| Desbalance a la izquierda con hijo izquierdo izquierdo | simple a la derecha |
+| Desbalance a la derecha con hijo derecho derecho | simple a la izquierda |
+| Desbalance a la izquierda con hijo izquierdo derecho | doble izquierda-derecha |
+| Desbalance a la derecha con hijo derecho izquierdo | doble derecha-izquierda |
+
+Gracias al rebalanceo, la altura de un AVL con n nodos está acotada por **h ≤ 1,44 · log₂(n + 2) − 0,328**, de modo que la búsqueda, la inserción y la eliminación son siempre **O(log n) en el peor caso**, sin importar el orden de llegada de los datos.
+
+### 8.3 Metodología del experimento
+
+El script `tests/experimento_desbalance.py` construye ambos árboles con el **mismo dataset** y los compara en cuatro escenarios:
+
+1. **`ordenado`** — títulos sintéticos insertados en orden creciente (peor caso del BST).
+2. **`inverso`** — en orden decreciente (peor caso por el otro lado).
+3. **`aleatorio`** — mismo dataset barajado con semilla fija (caso promedio).
+4. **`reales_ordenado` / `reales_desordenado`** — los 100 títulos reales de `datos/juegos.json`, ordenados y desordenados.
+
+Métricas registradas por cada par (estructura, escenario):
+
+- **altura** del árbol y **altura mínima teórica** `⌊log₂ n⌋`;
+- **comparaciones de búsqueda en el peor caso** (título inexistente menor y mayor que todos);
+- **comparaciones promedio** sobre una muestra de claves;
+- **tiempo de construcción** (mediana de 5 rondas) y **tiempo de búsqueda** por consulta.
+
+Se ejecuta con:
+
+```bash
+python -m tests.experimento_desbalance 100 1000 10000
+```
+
+### 8.4 Resultados
+
+| Escenario | n | Estructura | Altura | Alt. mín. | Cmp. peor | Cmp. prom. | T. constr. (s) | T. búsq. (s) |
+|---|---|---|---|---|---|---|---|---|
+| ordenado  | 100   | BST | 99   | 6  | 100   | 50,5  | 0,000805 | 0,000010 |
+| ordenado  | 100   | AVL | 6    | 6  | 7     | 5,8   | 0,001084 | 0,000001 |
+| ordenado  | 1.000 | BST | 999  | 9  | 1.000 | 498,5 | 0,068988 | 0,000112 |
+| ordenado  | 1.000 | AVL | 9    | 9  | 10    | 9,0   | 0,013170 | 0,000002 |
+| ordenado  | 10.000| BST | 9.999| 13 | 10.000| 4.976,0 | 6,078943 | 0,001211 |
+| ordenado  | 10.000| AVL | 13   | 13 | 14    | 13,4  | 0,129872 | 0,000001 |
+| inverso   | 10.000| BST | 9.999| 13 | 10.000| 4.976,0 | 4,343115 | 0,001855 |
+| inverso   | 10.000| AVL | 13   | 13 | 14    | 13,4  | 0,133903 | 0,000002 |
+| aleatorio | 1.000 | BST | 20   | 9  | 11    | 12,0  | 0,001653 | 0,000001 |
+| aleatorio | 1.000 | AVL | 11   | 9  | 10    | 9,0   | 0,011834 | 0,000002 |
+| aleatorio | 10.000| BST | 31   | 13 | 16    | 16,4  | 0,029380 | 0,000002 |
+| aleatorio | 10.000| AVL | 15   | 13 | 14    | 12,6  | 0,158052 | 0,000002 |
+| reales_ordenado    | 100 | BST | 99 | 6 | 100 | 50,5 | 0,000563 | 0,000011 |
+| reales_ordenado    | 100 | AVL | 6  | 6 | 7   | 5,8  | 0,000582 | 0,000001 |
+| reales_desordenado | 100 | BST | 13 | 6 | 5   | 7,4  | 0,000106 | 0,000001 |
+| reales_desordenado | 100 | AVL | 7  | 6 | 7   | 5,9  | 0,000464 | 0,000001 |
+
+### 8.5 Análisis de resultados
+
+- **El BST ordenado degenera en lista enlazada.** Con 10.000 títulos en orden alfabético la altura es 9.999 (frente a una mínima de 13): exactamente el comportamiento O(n) predicho. La búsqueda peor caso exige 10.000 comparaciones y, en promedio, 4.976 —prácticamente n/2—. El mini ejemplo del enunciado queda confirmado.
+- **El AVL no depende del orden de inserción.** En el mismo escenario ordenado su altura es 13, la mínima teórica, con 14 comparaciones en el peor caso y ~13,4 en promedio: Θ(log n) garantizado. La cota teórica también se respeta en todos los casos (para n = 10.000, 1,44·log₂(10.002) ≈ 19 > 13).
+- **En datos aleatorios el BST "tiene suerte".** Con 10.000 claves barajadas su altura es 31 y el peor caso 16 comparaciones, lejos del desastre ordenado, pero sin ninguna garantía: una permutación desafortunada lo degrada otra vez. El AVL, en cambio, acota la altura en 15 sin importar la permutación.
+- **La construcción es el único terreno donde el BST compite.** Con datos aleatorios el BST construye más rápido (0,029 s vs. 0,158 s en n = 10.000), porque no paga rotaciones. Pero con datos ordenados su construcción es **cuadrática** (cada inserción recorre la cadena creciente: 6,08 s vs. los 0,13 s del AVL). El AVL es, entonces, más lento solo cuando el BST tiene la suerte de no degenerar.
+- **La ventaja del AVL se dispara con n.** En el peor caso ordenado, cada búsqueda pasa de 0,001211 s (BST) a 0,000001 s (AVL): alrededor de **1.000 veces más rápida** con solo 10.000 claves, y la brecha crece linealmente con n.
+- **Con el catálogo real (100 títulos) pasa lo mismo a menor escala:** ordenado, el BST alcanza altura 99 y 50,5 comparaciones promedio, mientras el AVL se queda en 6 y 5,8. Desordenado, la diferencia se achica pero el AVL sigue siendo el más predecible.
+
+### 8.6 Conclusión técnica
+
+- **Por qué importa el balance:** la promesa de O(log n) de un árbol de búsqueda **no es una propiedad del BST, sino de su forma**. Un BST sin balanceo solo la cumple si los datos llegan en un orden favorable; ordenados, degrada a O(n) y pierde toda la ventaja frente a una lista.
+- **Qué aporta el AVL:** garantiza el O(log n) en el peor caso para búsqueda, inserción y eliminación, a cambio de un costo constante por operación (rotaciones) y un poco más de memoria por nodo (campo de altura). Es la estructura adecuada cuando el catálogo **cambia con frecuencia** y no se puede controlar el orden de las altas.
+- **Decisión para NextPlay:** el sistema usa el **AVL como estructura de búsqueda del catálogo dinámico** (`ui/terminal.py`), porque combina altas/bajas frecuentes con la garantía de búsqueda rápida. El BST común se conserva en `algoritmos/arbol.py` únicamente como referencia didáctica y base de comparación en el experimento.
+- **Limitación y alternativa:** el AVL es más rígido que otras estructuras auto-balanceadas; cuando las búsquedas dominan sobre las escrituras, un **árbol rojo-negro** (menos rotaciones por inserción) o una **tabla de hash** (O(1) promedio) pueden ser mejores opciones a evaluar como próximas estrategias.

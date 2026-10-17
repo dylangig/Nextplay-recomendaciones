@@ -27,6 +27,17 @@ class Catalogo:
     def listar_todos(self):
         return self._juegos
 
+    def agregar_juego(self, juego):
+        self._juegos.append(juego)
+
+    def eliminar_por_titulo(self, titulo_buscado):
+        titulo_buscado = titulo_buscado.lower()
+        for juego in self._juegos:
+            if juego.get_titulo().lower() == titulo_buscado:
+                self._juegos.remove(juego)
+                return juego
+        return None
+
     def filtrar_por_genero(self, genero_buscado):
         resultados = []
         for juego in self._juegos:

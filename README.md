@@ -46,6 +46,11 @@ Franco Steg
    python -m tests.benchmark 100 1000
    ```
 
+4. Ejecutar el experimento de desbalance BST vs. AVL:
+   ```bash
+   python -m tests.experimento_desbalance 100 1000 10000
+   ```
+
 ---
 
 ## 4. Estructura del Proyecto
