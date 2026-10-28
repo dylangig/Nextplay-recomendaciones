@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from algoritmos.arbol_avl import ArbolAVL
+from algoritmos.arbol_general import arbol_por_defecto
 from modelos.videojuego import Videojuego
 
 RUTA_GUARDADO = Path(__file__).resolve().parent.parent / "datos" / "juegos_preorden.json"
@@ -11,12 +12,85 @@ class SistemaUI:
     def __init__(self, catalogo):
         self._catalogo = catalogo
         self._arbol = None
+        self._arbol_general = None
 
     def _obtener_arbol(self):
         if self._arbol is None:
             self._arbol = ArbolAVL()
             self._arbol.construir(self._catalogo.listar_todos())
         return self._arbol
+
+    def _obtener_arbol_general(self):
+        if self._arbol_general is None:
+            self._arbol_general = arbol_por_defecto()
+        return self._arbol_general
+
+    def _juegos_de_categoria(self, categoria):
+        """Juegos del catálogo cuyo género está en la categoría o sus subcategorías."""
+        arbol = self._obtener_arbol_general()
+        generos = {g.casefold() for g in arbol.nombres_en_subarbol(categoria)}
+        return [
+            j for j in self._catalogo.listar_todos()
+            if j.get_genero().casefold() in generos
+        ]
+
+    def _explorar_categorias(self):
+        arbol = self._obtener_arbol_general()
+        while True:
+            print("\n         EXPLORAR CATEGORÍAS")
+            print("1. Ver jerarquía completa (con cantidad de juegos)")
+            print("2. Buscar categoría (muestra la ruta)")
+            print("3. Recorrido por niveles (BFS)")
+            print("4. Recorrido preorden (DFS)")
+            print("5. Ver juegos de una categoría")
+            print("0. Volver al menú principal")
+            subopcion = input("Opción: ")
+
+            if subopcion == '1':
+                print("\n Jerarquía de categorías (juegos del catálogo entre paréntesis):")
+                print(arbol.dibujar(
+                    sufijo=lambda nombre: f" ({len(self._juegos_de_categoria(nombre))} juegos)"
+                ))
+                print()
+
+            elif subopcion == '2':
+                categoria = input("> Categoría a buscar: ").strip()
+                ruta = arbol.buscar_ruta(categoria)
+                if ruta:
+                    print(f"\n Ruta: {' > '.join(ruta)}\n")
+                else:
+                    print(f"\n La categoría '{categoria}' no existe.\n")
+
+            elif subopcion == '3':
+                print("\n Recorrido por niveles (BFS):")
+                print(" → ".join(arbol.recorrido_por_niveles()))
+                print()
+
+            elif subopcion == '4':
+                print("\n Recorrido preorden (DFS):")
+                print(" → ".join(arbol.recorrido_preorden()))
+                print()
+
+            elif subopcion == '5':
+                categoria = input("> Categoría: ").strip()
+                try:
+                    juegos = self._juegos_de_categoria(categoria)
+                except ValueError:
+                    print(f"\n La categoría '{categoria}' no existe.\n")
+                    continue
+                if juegos:
+                    ruta = " > ".join(arbol.buscar_ruta(categoria))
+                    print(f"\n Juegos en '{ruta}' ({len(juegos)}):")
+                    for j in juegos:
+                        print(f" - {j}")
+                    print()
+                else:
+                    print(f"\n No hay juegos en '{categoria}'.\n")
+
+            elif subopcion == '0':
+                break
+            else:
+                print("\n Opción no válida.\n")
 
     def mostrar_menu(self):
         print("         NEXTPLAY — TERMINAL          ")
@@ -29,6 +103,7 @@ class SistemaUI:
         print("7. Eliminar videojuego")
         print("8. Guardar catálogo a archivo (preorden)")
         print("9. Vaciar catálogo")
+        print("10. Explorar categorías (árbol general)")
         print("0. Salir")
 
     def iniciar(self):
@@ -129,6 +204,9 @@ class SistemaUI:
                     print("\n Catálogo vaciado.\n")
                 else:
                     print("\n Operación cancelada.\n")
+
+            elif opcion == '10':
+                self._explorar_categorias()
 
             elif opcion == '0':
                 print("\nSaliendo de NextPlay... ¡Hasta luego!")

@@ -2,6 +2,8 @@
 
 > Trabajo Practico Integrador -- Estructuras de Datos (UNaB)
 > Aplicacion de consola para la busqueda, filtrado y recomendacion eficiente de videojuegos utilizando estructuras de datos avanzadas.
+>
+> Version del entregable: **v3 (TP5 -- Arbol general)**
 
 ---
 
@@ -51,6 +53,11 @@ Franco Steg
    python -m tests.experimento_desbalance 100 1000 10000
    ```
 
+5. Ejecutar los tests unitarios del arbol general:
+   ```bash
+   python -m unittest tests.test_arbol_general -v
+   ```
+
 ---
 
 ## 4. Estructura del Proyecto
@@ -62,13 +69,18 @@ Nextplay-recomendaciones/
 │   └── catalogo.py         # Catalogo (carga JSON, busqueda y filtros)
 ├── algoritmos/
 │   ├── busqueda.py         # busqueda lineal, binaria y preparacion del indice
+│   ├── arbol.py            # arbol binario de busqueda (BST)
+│   ├── arbol_avl.py        # arbol AVL (busqueda con balanceo)
+│   ├── arbol_general.py    # arbol general n-ario (jerarquia de categorias)
 │   └── generar_datos.py    # generacion de catalogos sinteticos para benchmarking
 ├── ui/
 │   └── terminal.py         # interfaz por consola
 ├── datos/
 │   └── juegos.json         # catalogo de videojuegos
 ├── tests/
-│   └── benchmark.py        # benchmark de las estrategias de busqueda
+│   ├── benchmark.py            # benchmark de las estrategias de busqueda
+│   ├── experimento_desbalance.py  # experimento BST vs. AVL
+│   └── test_arbol_general.py   # tests unitarios del arbol general
 ├── docs/
 │   └── Informe.md          # analisis de complejidad y resultados
 ├── main.py                 # punto de entrada
@@ -80,4 +92,6 @@ Nextplay-recomendaciones/
 ### Estado actual :
 TP 1 - Objetos y clases: Modelo e interfaz inicial.
 TP 2 - Estrategias de busqueda: lineal vs binaria con benchmark e informe.
-TP 3- Implemetancion de Arbol de busqueda
+TP 3 - Implemetancion de Arbol de busqueda
+TP 4 - Arbol AVL: rotaciones, balanceo y experimento de desbalance.
+TP 5 - Arbol general (n-ario): jerarquia de generos, recorridos y explorador de categorias en terminal (version 3).
