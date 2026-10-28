@@ -153,3 +153,120 @@ python -m tests.experimento_desbalance 100 1000 10000
 - **Qué aporta el AVL:** garantiza el O(log n) en el peor caso para búsqueda, inserción y eliminación, a cambio de un costo constante por operación (rotaciones) y un poco más de memoria por nodo (campo de altura). Es la estructura adecuada cuando el catálogo **cambia con frecuencia** y no se puede controlar el orden de las altas.
 - **Decisión para NextPlay:** el sistema usa el **AVL como estructura de búsqueda del catálogo dinámico** (`ui/terminal.py`), porque combina altas/bajas frecuentes con la garantía de búsqueda rápida. El BST común se conserva en `algoritmos/arbol.py` únicamente como referencia didáctica y base de comparación en el experimento.
 - **Limitación y alternativa:** el AVL es más rígido que otras estructuras auto-balanceadas; cuando las búsquedas dominan sobre las escrituras, un **árbol rojo-negro** (menos rotaciones por inserción) o una **tabla de hash** (O(1) promedio) pueden ser mejores opciones a evaluar como próximas estrategias.
+
+## 9. Árbol general (n-ario): explorar el universo de géneros
+
+### 9.1 Motivación
+
+El BST y el AVL modelan una relación **1 a 2** (izquierda/derecha) pensada para buscar **una clave**. Pero la jerarquía del dominio de NextPlay no tiene esa forma: una categoría puede contener muchas subcategorías (Acción tiene cinco, Rol cuatro). Un **árbol general** o n-ario (`algoritmos/arbol_general.py`) permite que cada nodo tenga cantidad arbitraria de hijos, representando fielmente esa taxonomía:
+
+```
+Videojuegos
+├── Acción
+│   ├── Acción-aventura
+│   ├── Hack and slash
+│   ├── Sigilo
+│   ├── Lucha
+│   └── Run and gun
+├── Shooter
+│   ├── FPS
+│   └── Battle royale
+...
+```
+
+La jerarquía completa (`JERARQUIA_GENEROS`) cubre los **25 géneros reales** de `datos/juegos.json` en 28 nodos: 1 raíz, 10 categorías y 17 subgéneros, con altura 3.
+
+### 9.2 Estructura y operaciones
+
+- **`NodoGeneral`**: `dato`, referencia al `padre` (permite reconstruir la ruta hasta la raíz) y lista ordenada de `hijos`.
+- **`ArbolGeneral`**: raíz opcional (puede ser `None`); construcción declarativa con `construir_desde_diccionario` a partir de un dict anidado.
+
+| Operación | Implementación | Complejidad |
+|---|---|---|
+| `agregar_hijo(padre, dato)` | verificación de pertenencia + append al padre | O(n) verificación, O(1) el enlace |
+| `buscar(dato)` | DFS case-insensitive | Θ(n) |
+| `buscar_ruta(dato)` | DFS + seguimiento de padres | Θ(n) |
+| `recorrido_preorden()` | DFS con pila explícita | Θ(n) |
+| `recorrido_por_niveles()` | BFS con cola (`deque`) | Θ(n) |
+| `recorrido_postorden()` | DFS recursivo (hijos antes que el padre) | Θ(n) |
+| `altura()` | DFS con nivel por nodo | Θ(n) |
+| `dibujar()` | preorden con prefijos `├──` / `└──` | Θ(n) |
+
+A diferencia del BST/AVL, **no hay orden que aprovechar**: un árbol general no es una estructura de búsqueda, sino de **organización jerárquica**, por eso toda búsqueda es O(n). Su valor está en modelar pertenencias (un juego pertenece a una categoría y a todos sus ancestros).
+
+### 9.3 Integración con el dominio
+
+La opción **10 — Explorar categorías** de la terminal conecta el árbol con el catálogo:
+
+1. **Jerarquía con conteos**: `dibujar(sufijo=...)` muestra los juegos del catálogo en cada categoría (el nodo suma su género propio y los de todos sus descendientes). Ejemplo real de la salida:
+
+```
+Videojuegos (100 juegos)
+├── Acción (22 juegos)
+│   ├── Acción-aventura (14 juegos)
+│   ├── Hack and slash (2 juegos)
+│   ├── Sigilo (3 juegos)
+│   ├── Lucha (1 juegos)
+│   └── Run and gun (1 juegos)
+├── Shooter (9 juegos)
+│   ├── FPS (8 juegos)
+│   └── Battle royale (1 juegos)
+...
+```
+
+Los conteos de las 10 categorías raíz suman 100, es decir, **todos los juegos caen exactamente en una rama** (verificado por `tests/test_arbol_general.py`).
+
+2. **Búsqueda con ruta**: `buscar_ruta("metroidvania")` → `Videojuegos > Aventura > Metroidvania` (case-insensitive).
+3. **Listado por categoría**: los nombres del árbol son los valores reales del campo `genero`, de modo que `nombres_en_subarbol("Roguelike")` devuelve los géneros a filtrar contra el catálogo (8 juegos para Roguelike).
+
+### 9.4 Ejemplos de recorridos
+
+Sobre la jerarquía real, los tres recorridos producen:
+
+**Por niveles (BFS)** — primero las 10 categorías, después los 17 subgéneros:
+
+```
+Videojuegos → Acción → Shooter → Rol → Aventura → Estrategia → Plataformas →
+Puzzle → Roguelike → Simulación → Deportes → Acción-aventura → Hack and slash →
+Sigilo → Lucha → Run and gun → FPS → Battle royale → RPG → Action RPG → JRPG →
+RPG táctico → Metroidvania → Survival horror → Immersive sim →
+Estrategia por turnos → Estrategia táctica → Sandbox
+```
+
+**Preorden (DFS)** — cada rama completa antes de pasar a la siguiente:
+
+```
+Videojuegos → Acción → Acción-aventura → Hack and slash → Sigilo → Lucha →
+Run and gun → Shooter → FPS → Battle royale → Rol → RPG → Action RPG → JRPG →
+RPG táctico → Aventura → Metroidvania → Survival horror → Immersive sim →
+Estrategia → Estrategia por turnos → Estrategia táctica → Plataformas →
+Puzzle → Roguelike → Simulación → Sandbox → Deportes
+```
+
+**Postorden** — las hojas primero y la raíz al final (útil para acumular conteos de abajo hacia arriba):
+
+```
+Acción-aventura → Hack and slash → Sigilo → Lucha → Run and gun → Acción →
+FPS → Battle royale → Shooter → RPG → Action RPG → JRPG → RPG táctico → Rol →
+Metroidvania → Survival horror → Immersive sim → Aventura →
+Estrategia por turnos → Estrategia táctica → Estrategia → Plataformas →
+Puzzle → Roguelike → Sandbox → Simulación → Deportes → Videojuegos
+```
+
+### 9.5 BST/AVL vs. árbol general: qué estructura para qué
+
+| | BST / AVL | Árbol general |
+|---|---|---|
+| **Forma** | Cada nodo: máx. 2 hijos | Cada nodo: N hijos |
+| **Propósito** | Buscar una clave en O(log n) | Organizar una jerarquía |
+| **Orden** | Inorden = orden total | Sin orden total; solo pertenencias |
+| **Búsqueda** | O(log n) (AVL balanceado) | O(n) |
+| **En NextPlay** | Catálogo dinámico (altas/bajas, búsqueda por título) | Taxonomía de géneros (explorar, agrupar, listar por categoría) |
+
+Son complementarios: el AVL sigue siendo la estructura de búsqueda del catálogo y el árbol general aporta la **vista de categorías** que el árbol binario no puede expresar.
+
+### 9.6 Conclusión técnica
+
+- **Por qué n-ario y no binario:** la taxonomía de géneros no es binaria; forzarla a BST obligaría a inventar claves artificiales. El árbol general la modela directamente y `dibujar()` la hace legible para el usuario final.
+- **Costo:** todas las operaciones son O(n) (no hay claves ordenadas), aceptable porque la jerarquía es chica (28 nodos) y casi estática; los conteos contra el catálogo son O(categorías × juegos) = O(28 × 100) por render, también despreciable.
+- **Testing:** `tests/test_arbol_general.py` (18 tests) cubre construcción, inserción, búsqueda, los tres recorridos, el dibujo ASCII y la **invariante de integración**: los 25 géneros del JSON existen en el árbol y los conteos por rama suman 100.
