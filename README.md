@@ -87,10 +87,29 @@ Nextplay-recomendaciones/
 │   ├── test_arbol_general.py   # tests unitarios del arbol general
 │   └── test_heap.py            # tests unitarios de la heap y el Top-N
 ├── docs/
-│   └── Informe.md          # analisis de complejidad y resultados
+│   ├── 01-requerimientos.md    # requerimientos funcionales y no funcionales
+│   ├── 02-casos-de-uso.md      # diagrama y descripcion de casos de uso
+│   ├── 03-diagrama-clases.md   # clases de dominio, estructuras y relaciones
+│   ├── 04-diagrama-datos.md    # conexion entre estructuras (flujo de datos)
+│   ├── 05-gestion-proyecto.md  # tablero GitHub Projects y metodologia
+│   ├── Informe.md              # analisis de complejidad y resultados (TP2-TP8)
+│   └── capturas/               # capturas de pantalla de la demo
 ├── main.py                 # punto de entrada
 └── README.md
 ```
+
+---
+
+## 5. Documentación
+
+| Documento | Contenido |
+|---|---|
+| [docs/01-requerimientos.md](docs/01-requerimientos.md) | Requerimientos funcionales (RF) y no funcionales (RNF), alcance |
+| [docs/02-casos-de-uso.md](docs/02-casos-de-uso.md) | Diagrama UML y descripción de los casos de uso |
+| [docs/03-diagrama-clases.md](docs/03-diagrama-clases.md) | Clases de dominio y estructuras, con relaciones |
+| [docs/04-diagrama-datos.md](docs/04-diagrama-datos.md) | Conexión entre estructuras (flujo de datos) |
+| [docs/05-gestion-proyecto.md](docs/05-gestion-proyecto.md) | Tablero, sprints e historias de usuario |
+| [docs/Informe.md](docs/Informe.md) | Análisis de complejidad, benchmarks y experimentos |
 
 ---
 
