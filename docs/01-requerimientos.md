@@ -36,13 +36,13 @@
 | Código | Requerimiento |
 |---|---|
 | **RF12** | El sistema debe modelar **relaciones entre juegos** en un grafo: dos juegos están conectados si comparten género o comparten estudio. |
-| **RF13** | El sistema debe permitir consultar los **juegos relacionados** a uno dado. |
+| **RF13** | El sistema debe permitir consultar los **juegos relacionados** a uno dado (ordenados por afinidad). |
 
 ### Exploración de la red (BFS / DFS) — TP8
 
 | Código | Requerimiento |
 |---|---|
-| **RF14** | El sistema debe poder responder **¿cuál es el juego relacionado más cercano a X?** usando **BFS** (camino con menos aristas). |
+| **RF14** | El sistema debe poder responder **¿cuál es el juego relacionado más cercano a X?** usando **BFS** (camino con menos aristas; empate resuelto por mayor rating). |
 | **RF15** | El sistema debe poder **explorar en profundidad** toda la red conectada con un juego usando **DFS**. |
 
 ### Transversal

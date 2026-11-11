@@ -20,11 +20,11 @@
 │   │ Listar / orden      │        │ Buscar categoría (ruta)  │           │
 │   │ alfabético (AVL)    │        └──────────────────────────┘           │
 │   └─────────────────────┘        ┌──────────────────────────┐           │
-│   ┌─────────────────────┐        │ Ver juegos relacionados  │  (TP7)    │
+│   ┌─────────────────────┐        │ Ver juegos relacionados  │           │
 │   │ Agregar / eliminar  │        │ (grafo)                  │           │
 │   └─────────────────────┘        └──────────────────────────┘           │
 │   ┌─────────────────────┐        ┌──────────────────────────┐           │
-│   │ Exportar catálogo   │        │ Cercano (BFS) /          │  (TP8)    │
+│   │ Exportar catálogo   │        │ Cercano (BFS) /          │           │
 │   │ (preorden)          │        │ explorar red (DFS)       │           │
 │   └─────────────────────┘        └──────────────────────────┘           │
 │                                                                          │
@@ -94,20 +94,21 @@
 | **Flujo principal (baja)** | 1. Elige "Eliminar videojuego". 2. Ingresa el título. 3. El sistema elimina de la lista **y del AVL**. 4. Confirma la eliminación. |
 | **Flujo alternativo** | Alta con título duplicado o baja con título inexistente: informa y no modifica nada. |
 
-### CU07 — Ver juegos relacionados *(TP7)*
+### CU07 — Ver juegos relacionados
 
 | | |
 |---|---|
 | **Actor** | Usuario |
-| **Precondición** | El grafo está construido desde el catálogo |
-| **Flujo principal** | 1. Elige "Juegos relacionados". 2. Ingresa el título de un juego. 3. El sistema lista sus vértices vecinos (comparten género o estudio) ordenados por afinidad. |
+| **Precondición** | El catálogo está cargado (el grafo se construye en cada consulta) |
+| **Flujo principal** | 1. Elige "Juegos relacionados". 2. Ingresa el título de un juego. 3. El sistema construye el grafo, lista sus vértices vecinos (comparten género o estudio) ordenados por afinidad. |
 | **Flujo alternativo** | Si el juego no existe o no tiene vecinos, lo informa. |
 
-### CU08 — Consulta BFS / DFS sobre la red *(TP8)*
+### CU08 — Consulta BFS / DFS sobre la red
 
 | | |
 |---|---|
 | **Actor** | Usuario |
-| **Precondición** | El grafo está construido |
-| **Flujo principal (BFS)** | 1. Elige "Juego relacionado más cercano". 2. Ingresa un juego. 3. El sistema ejecuta BFS y devuelve el alcanzable más cercano (menos aristas). |
-| **Flujo principal (DFS)** | 1. Elige "Explorar red en profundidad". 2. Ingresa un juego. 3. El sistema ejecuta DFS y muestra el recorrido completo de la componente conectada. |
+| **Precondición** | El catálogo está cargado |
+| **Flujo principal (BFS)** | 1. Elige "Juego relacionado más cercano (BFS)". 2. Ingresa un juego. 3. El sistema ejecuta BFS y devuelve el alcanzable más cercano (menos aristas; empate → mayor rating). |
+| **Flujo principal (DFS)** | 1. Elige "Explorar toda la red en profundidad (DFS)". 2. Ingresa un juego. 3. El sistema ejecuta DFS y muestra la componente conexa completa en orden de visita. |
+| **Flujo alternativo** | Si el juego no tiene conexiones, lo informa. |

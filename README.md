@@ -111,7 +111,9 @@ Nextplay-recomendaciones/
 | [docs/03-diagrama-clases.md](docs/03-diagrama-clases.md) | Clases de dominio y estructuras, con relaciones |
 | [docs/04-diagrama-datos.md](docs/04-diagrama-datos.md) | Conexión entre estructuras (flujo de datos) |
 | [docs/05-gestion-proyecto.md](docs/05-gestion-proyecto.md) | Tablero, sprints e historias de usuario |
+| [docs/06-defensa.md](docs/06-defensa.md) | Guion de la defensa (Demo Day) y preguntas típicas |
 | [docs/Informe.md](docs/Informe.md) | Análisis de complejidad, benchmarks y experimentos |
+| [docs/capturas/](docs/capturas/) | Transcripciones reales de la demo en terminal |
 
 ---
 

@@ -57,7 +57,9 @@
 | 8. Exportar preorden | `ArbolAVL` preorder | Θ(n) |
 | 10. Top N (heap) | `MaxHeap` vía `Recomendador` | **O(K + n log K)** |
 | 11. Explorar categorías | `ArbolGeneral` + conteos sobre el catálogo | O(n) |
-| Relacionados / BFS / DFS *(TP7-8)* | `Grafo` | O(V + E) |
+| 12.1 Juegos relacionados | `Grafo` (lista de adyacencia) | O(V²) build + O(grado) |
+| 12.2 Más cercano (BFS) | `Grafo.bfs()` | **O(V + E)** |
+| 12.3 Explorar red (DFS) | `Grafo.dfs()` | **O(V + E)** |
 
 ## 3. Conexiones en código (imports reales)
 
@@ -65,10 +67,11 @@
 main.py
   ├── modelos.catalogo.Catalogo ────── lee ──► datos/juegos.json
   ├── servicios.recomendador.Recomendador
-  │        └── estructuras.heap.MaxHeap ◄── usa para obtener_top_n()
+  │        ├── estructuras.heap.MaxHeap ◄── usa para obtener_top_n()
+  │        └── algoritmos.grafo.Grafo ◄── construye en cada consulta (TP7)
   └── ui.terminal.SistemaUI
            ├── Catalogo                (lista + búsqueda lineal + filtros)
-           ├── Recomendador            (Top-N con heap)
+           ├── Recomendador            (Top-N, relacionados, BFS, DFS)
            ├── algoritmos.arbol_avl.ArbolAVL      (búsqueda por título)
            └── algoritmos.arbol_general.ArbolGeneral  (jerarquía de categorías)
                  └── JERARQUIA_GENEROS (dict de los 25 géneros reales)
@@ -98,7 +101,7 @@ main.py
 > sincronizado ante cada alta/baja. El AVL, en cambio, sí se mantiene incremental porque
 > se consulta mucho (búsquedas) y las rotaciones cuestan O(1).
 
-## 5. Versión TP7/TP8 (grafo)
+## 5. Grafo y recorridos (TP7 / TP8)
 
 ```
   Catalogo.listar_todos()
@@ -107,7 +110,11 @@ main.py
         ▼
      Grafo._adyacencia = {juego: [(vecino, peso), ...]}   (lista de adyacencia)
         │
-        ├── vecinos(j)          → "juegos relacionados"   (TP7)
-        ├── bfs(origen)         → el más cercano en aristas (TP8)
-        └── dfs(origen)         → explorar la red en profundidad (TP8)
+        ├── vecinos(j)          → "juegos relacionados"        (opc. 12.1)
+        ├── bfs(origen)         → el más cercano en aristas    (opc. 12.2)
+        └── dfs(origen)         → explorar la red en profundidad (opc. 12.3)
 ```
+
+- **Vértice** = juego · **Arista** no dirigida si comparten género o estudio · **Peso** = `1/(1+|Δrating|)` ∈ (0,1].
+- **Construcción:** `Recomendador.construir_grafo()` compara todos los pares **O(V²)** y se recrea en cada consulta (más barato que sincronizar ante altas/bajas).
+- **Recorridos:** BFS con cola (`deque`) descubre primero lo más cercano; DFS con pila explícita cubre la componente en profundidad; ambos **O(V + E)** con conjunto de visitados.

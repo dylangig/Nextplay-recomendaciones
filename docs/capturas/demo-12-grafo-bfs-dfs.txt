@@ -1,0 +1,85 @@
+ Se cargaron 100 juegos exitosamente.
+
+         NEXTPLAY — TERMINAL          
+1. Buscar videojuego por título
+2. Filtrar videojuegos por género
+3. Listar todos los videojuegos
+4. Buscar por título (árbol AVL)
+5. Listar en orden alfabético (recorrido inorden)
+6. Agregar videojuego
+7. Eliminar videojuego
+8. Guardar catálogo a archivo (preorden)
+9. Vaciar catálogo
+10. Top N mejores evaluados (heap)
+11. Explorar categorías (árbol general)
+12. Juegos relacionados (grafo)
+0. Salir
+Opción: 
+         RED DE RELACIONES (grafo)
+1. Ver juegos relacionados con uno dado
+2. Juego relacionado más cercano (BFS)
+3. Explorar toda la red en profundidad (DFS)
+0. Volver al menú principal
+Opción: > Título del juego: 
+ Juegos relacionados con 'Hades' (comparten género o estudio):
+ - Slay the Spire (Roguelike) - Estudio: Mega Crit  9.4   afinidad 71%
+ - Balatro (Roguelike) - Estudio: LocalThunk  9.3   afinidad 67%
+ - The Binding of Isaac: Rebirth (Roguelike) - Estudio: Edmund McMillen  9.0   afinidad 56%
+ - Spelunky (Roguelike) - Estudio: Mossmouth  9.0   afinidad 56%
+ - Dead Cells (Roguelike) - Estudio: Motion Twin  8.9   afinidad 53%
+ - Vampire Survivors (Roguelike) - Estudio: poncle  8.9   afinidad 53%
+ - Risk of Rain 2 (Roguelike) - Estudio: Hopoo Games  8.8   afinidad 50%
+
+ (7 conexiones · grafo no dirigido, peso = 1/(1+|Δrating|))
+
+
+         RED DE RELACIONES (grafo)
+1. Ver juegos relacionados con uno dado
+2. Juego relacionado más cercano (BFS)
+3. Explorar toda la red en profundidad (DFS)
+0. Volver al menú principal
+Opción: > Título del juego: 
+ BFS desde 'Hades':
+   El más cercano es 'Slay the Spire'
+   a 1 arista(s) de distancia (camino más corto).
+   Slay the Spire (Roguelike) - Estudio: Mega Crit  9.4
+
+
+         RED DE RELACIONES (grafo)
+1. Ver juegos relacionados con uno dado
+2. Juego relacionado más cercano (BFS)
+3. Explorar toda la red en profundidad (DFS)
+0. Volver al menú principal
+Opción: > Título del juego: 
+ DFS desde 'Hades' — red conectada (8 juegos):
+    1. Hades (Roguelike) - Estudio: Supergiant Games  9.8
+    2. Dead Cells (Roguelike) - Estudio: Motion Twin  8.9
+    3. Slay the Spire (Roguelike) - Estudio: Mega Crit  9.4
+    4. Balatro (Roguelike) - Estudio: LocalThunk  9.3
+    5. Vampire Survivors (Roguelike) - Estudio: poncle  8.9
+    6. The Binding of Isaac: Rebirth (Roguelike) - Estudio: Edmund McMillen  9.0
+    7. Risk of Rain 2 (Roguelike) - Estudio: Hopoo Games  8.8
+    8. Spelunky (Roguelike) - Estudio: Mossmouth  9.0
+
+
+         RED DE RELACIONES (grafo)
+1. Ver juegos relacionados con uno dado
+2. Juego relacionado más cercano (BFS)
+3. Explorar toda la red en profundidad (DFS)
+0. Volver al menú principal
+Opción:          NEXTPLAY — TERMINAL          
+1. Buscar videojuego por título
+2. Filtrar videojuegos por género
+3. Listar todos los videojuegos
+4. Buscar por título (árbol AVL)
+5. Listar en orden alfabético (recorrido inorden)
+6. Agregar videojuego
+7. Eliminar videojuego
+8. Guardar catálogo a archivo (preorden)
+9. Vaciar catálogo
+10. Top N mejores evaluados (heap)
+11. Explorar categorías (árbol general)
+12. Juegos relacionados (grafo)
+0. Salir
+Opción: 
+Saliendo de NextPlay... ¡Hasta luego!
