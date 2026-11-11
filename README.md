@@ -3,7 +3,7 @@
 > Trabajo Practico Integrador -- Estructuras de Datos (UNaB)
 > Aplicacion de consola para la busqueda, filtrado y recomendacion eficiente de videojuegos utilizando estructuras de datos avanzadas.
 >
-> Version del entregable: **v3 (TP5 -- Arbol general)**
+> Version del entregable: **v4 (TP6 -- Heap / Top-N)**
 
 ---
 
@@ -53,9 +53,9 @@ Franco Steg
    python -m tests.experimento_desbalance 100 1000 10000
    ```
 
-5. Ejecutar los tests unitarios del arbol general:
+5. Ejecutar los tests unitarios (árbol general y heap):
    ```bash
-   python -m unittest tests.test_arbol_general -v
+   python -m unittest discover -s tests -v
    ```
 
 ---
@@ -73,6 +73,10 @@ Nextplay-recomendaciones/
 │   ├── arbol_avl.py        # arbol AVL (busqueda con balanceo)
 │   ├── arbol_general.py    # arbol general n-ario (jerarquia de categorias)
 │   └── generar_datos.py    # generacion de catalogos sinteticos para benchmarking
+├── estructuras/
+│   └── heap.py             # MaxHeap manual (sin heapq) para rankings
+├── servicios/
+│   └── recomendador.py      # logica de negocio: Top-N con heap
 ├── ui/
 │   └── terminal.py         # interfaz por consola
 ├── datos/
@@ -80,7 +84,8 @@ Nextplay-recomendaciones/
 ├── tests/
 │   ├── benchmark.py            # benchmark de las estrategias de busqueda
 │   ├── experimento_desbalance.py  # experimento BST vs. AVL
-│   └── test_arbol_general.py   # tests unitarios del arbol general
+│   ├── test_arbol_general.py   # tests unitarios del arbol general
+│   └── test_heap.py            # tests unitarios de la heap y el Top-N
 ├── docs/
 │   └── Informe.md          # analisis de complejidad y resultados
 ├── main.py                 # punto de entrada
@@ -95,3 +100,4 @@ TP 2 - Estrategias de busqueda: lineal vs binaria con benchmark e informe.
 TP 3 - Implemetancion de Arbol de busqueda
 TP 4 - Arbol AVL: rotaciones, balanceo y experimento de desbalance.
 TP 5 - Arbol general (n-ario): jerarquia de generos, recorridos y explorador de categorias en terminal (version 3).
+TP 6 - Heap (cola de prioridad): MaxHeap manual, ranking Top-N por rating con el servicio Recomendador (version 4).

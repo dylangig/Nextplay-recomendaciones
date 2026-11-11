@@ -270,3 +270,74 @@ Son complementarios: el AVL sigue siendo la estructura de búsqueda del catálog
 - **Por qué n-ario y no binario:** la taxonomía de géneros no es binaria; forzarla a BST obligaría a inventar claves artificiales. El árbol general la modela directamente y `dibujar()` la hace legible para el usuario final.
 - **Costo:** todas las operaciones son O(n) (no hay claves ordenadas), aceptable porque la jerarquía es chica (28 nodos) y casi estática; los conteos contra el catálogo son O(categorías × juegos) = O(28 × 100) por render, también despreciable.
 - **Testing:** `tests/test_arbol_general.py` (18 tests) cubre construcción, inserción, búsqueda, los tres recorridos, el dibujo ASCII y la **invariante de integración**: los 25 géneros del JSON existen en el árbol y los conteos por rama suman 100.
+
+## 10. Heap: ranking Top-N sin ordenar todo el catálogo
+
+### 10.1 El problema: ¿por qué un heap?
+
+El sistema necesita responder preguntas como *"¿cuáles son los 10 juegos mejor evaluados?"*. La solución ingenua es ordenar el catálogo con `sort()` y tomar los primeros N:
+
+- `sort()`: **O(K log K)** con K = tamaño del catálogo, y reordena el dataset completo **solo para leer los primeros N elementos**.
+
+Un **heap binario** (`estructuras/heap.py`, implementado a mano — sin `heapq`, según reglas de cátedra) resuelve la misma consulta en **O(K + n log K)**:
+
+1. `heapify` construye la heap en **O(K)** (algoritmo de Floyd: hundir desde el último padre, no un push por elemento).
+2. Cada `pop` extrae el máximo en **O(log K)** y solo se pagan n extracciones.
+
+| Operación | `sort()` + slicing | Heap |
+|---|---|---|
+| Construir | O(K log K) | **O(K)** (heapify) |
+| Obtener n | O(1) ya ordenado | O(n log K) |
+| **Total** | O(K log K) | **O(K + n log K)** |
+| ¿Modifica el dataset? | Sí (una copia ordenada) | No |
+
+La ventaja es clara cuando **n << K** (el caso típico: 10 extracciones sobre 100.000 juegos). Además, la heap permite **mantener un ranking dinámico**: si cambia un rating, se pueden hacer pushes/pops incrementalmente sin reordenar todo.
+
+### 10.2 Implementación
+
+- **`MaxHeap`** sobre una lista interna: el elemento en la posición `i` tiene hijos en `2i+1` y `2i+2`, padre en `(i-1)//2`.
+- **Prioridad configurable** vía `key` (por defecto la identidad): `MaxHeap(key=lambda j: j.get_rating())`. La misma estructura sirve para cualquier criterio sin modificarla.
+- **Métodos:** `push` (append + `_sift_up`, O(log n)), `pop` (swap raíz/último + `_sift_down`, O(log n)), `peek` O(1), `size`, `is_empty`, `clear`, y `heapify` de clase (construcción Floyd O(n)).
+- **Casos borde:** `pop`/`peek` sobre heap vacía lanzan `IndexError`; `obtener_top_n(n)` con `n <= 0` devuelve `[]` y con `n > K` devuelve los K disponibles.
+- **`_sift_up` / `_sift_down`** manuales: comparan prioridades del hijo/padre y intercambian hasta restaurar la propiedad de heap (ningún hijo supera a su padre).
+
+### 10.3 Integración con el dominio
+
+`servicios/recomendador.py::Recomendador.obtener_top_n(n)`:
+
+```python
+heap = MaxHeap.heapify(catalogo.listar_todos(), key=lambda j: j.get_rating())
+return [heap.pop() for _ in range(min(n, heap.size()))]
+```
+
+- La prioridad es el **rating** del juego (5.0–10.0), el criterio de calidad real disponible en el dataset.
+- El catálogo **no se modifica**: `heapify` trabaja sobre una copia.
+- La opción **10. Top N mejores evaluados (heap)** de la terminal muestra el ranking con medallas:
+
+```
+         TOP 5 — MEJOR EVALUADOS
+ ─────────────────────────────────
+ 🥇 Hades                            ⭐ 9.8
+ 🥈 Baldur's Gate 3                  ⭐ 9.8
+ 🥉 The Legend of Zelda: Ocarina of Time ⭐ 9.8
+  4. The Legend of Zelda: Breath of the Wild ⭐ 9.7
+  5. The Witcher 3: Wild Hunt         ⭐ 9.7
+ ─────────────────────────────────
+ Fuente: MaxHeap (heapify O(K) + 5 extracciones O(log K))
+```
+
+### 10.4 Complejidad resumen
+
+| Operación | Ω (mejor) | Θ (promedio) | O (peor) |
+|---|---|---|---|
+| `push` | Ω(1) | Θ(log n) | O(log n) |
+| `pop` | Ω(1) | Θ(log n) | O(log n) |
+| `peek` | Θ(1) | Θ(1) | O(1) |
+| `heapify` (n elementos) | Ω(n) | Θ(n) | O(n) |
+| `obtener_top_n(n)` | Ω(K + n) | Θ(K + n log K) | O(K + n log K) |
+
+### 10.5 Conclusión técnica
+
+- **Por qué un heap y no ordenar todo:** ordenar paga O(K log K) completo aunque solo se pidan 10 elementos; el heap construye en lineal y cobra logaritmo solo por cada extracción real. Es la estructura natural para *rankings dinámicos*.
+- **Por qué manual:** la regla de la cátedra prohíbe `heapq`; además, implementar `_sift_up`/`_sift_down`/`heapify` permite explicar la propiedad de heap y el costo amortizado de Floyd en la defensa.
+- **Testing:** `tests/test_heap.py` (13 tests): orden de extracción, propiedad de heap tras `heapify`, casos borde (`IndexError`), prioridad configurable, y que `obtener_top_n` coincide con el `sort()` de referencia sin mutar el catálogo.
