@@ -341,3 +341,51 @@ return [heap.pop() for _ in range(min(n, heap.size()))]
 - **Por qué un heap y no ordenar todo:** ordenar paga O(K log K) completo aunque solo se pidan 10 elementos; el heap construye en lineal y cobra logaritmo solo por cada extracción real. Es la estructura natural para *rankings dinámicos*.
 - **Por qué manual:** la regla de la cátedra prohíbe `heapq`; además, implementar `_sift_up`/`_sift_down`/`heapify` permite explicar la propiedad de heap y el costo amortizado de Floyd en la defensa.
 - **Testing:** `tests/test_heap.py` (13 tests): orden de extracción, propiedad de heap tras `heapify`, casos borde (`IndexError`), prioridad configurable, y que `obtener_top_n` coincide con el `sort()` de referencia sin mutar el catálogo.
+
+## 11. Grafo: las relaciones entre juegos como una red
+
+### 11.1 Modelo (decisiones justificadas)
+
+| Decisión | Elección | Por qué |
+|---|---|---|
+| **Vértice** | Un **juego** del catálogo | Es la entidad que el usuario quiere relacionar ("¿qué juego se parece a Hades?"). |
+| **Arista** | **No dirigida**: comparten **género** o **estudio** | La relación es simétrica (si A comparte género con B, B lo comparte con A) y representa afinidad real del dominio, como el ejemplo "comparten género y director" de la consigna. |
+| **Peso** | **Sí, pesado**: afinidad = `1 / (1 + \|Δrating\|)` ∈ (0, 1] | Los juegos con ratings cercanos son más afines. Siempre positivo → apto para un eventual camino mínimo (Dijkstra), aunque el TP9 fue eliminado. |
+| **Representación** | **Lista de adyacencia** (dict `{juego: [(vecino, peso)]}`) | El grafo es **disperso**: 100 vértices y unos cientos de aristas (cada juego tiene pocos vecinos). O(V + E) memoria vs **O(V²) = 10.000** celdas de la matriz, de las cuales la mayoría estarían vacías. También permite listar vecinos de un vértice en O(grado) sin escanear V. |
+
+### 11.2 Implementación
+
+- **`algoritmos/grafo.py::Grafo`** — estructura genérica (funciona con strings en tests y con `Videojuego` en el sistema):
+  - `agregar_vertice(v)` O(1) idempotente; `agregar_arista(a, b, peso)` O(1) registra en **ambas direcciones** (no dirigida) y actualiza el peso si la arista ya existe.
+  - `vecinos(v)`, `grado(v)`, `peso_entre(a, b)`, `estan_conectados(a, b)`, `cantidad_vertices()`, `cantidad_aristas()`.
+  - **Caso borde:** los lazos (A ↔ A) están prohibidos (`ValueError`); `vecinos()` de un vértice inexistente devuelve `[]`.
+- **`servicios/recomendador.py::construir_grafo()`** — mapea el dominio al grafo: compara todos los pares de juegos (O(V²), V ≤ 100) y conecta los que comparten género o estudio. Se **reconstruye en cada consulta**: el catálogo es chico y dinámico (altas/bajas), y recalcular es más barato que mantener el grafo sincronizado.
+- **`juegos_relacionados(juego)`** — devuelve los vecinos ordenados de mayor a menor afinidad.
+
+### 11.3 Consulta integrada en la terminal
+
+Opción **12. Juegos relacionados (grafo)**:
+
+```
+ Juegos relacionados con 'Hades' (comparten género o estudio):
+ - Slay the Spire (Roguelike) - Estudio: Mega Crit  9.4   afinidad 71%
+ - Balatro (Roguelike) - Estudio: LocalThunk  9.3   afinidad 67%
+ - The Binding of Isaac: Rebirth (Roguelike) - Estudio: Edmund McMillen  9.0   afinidad 56%
+ ...
+ (7 conexiones · grafo no dirigido, peso = 1/(1+|Δrating|))
+```
+
+### 11.4 Complejidad
+
+| Operación | Complejidad |
+|---|---|
+| `agregar_vertice` / `agregar_arista` | O(1) amortizado (dict) |
+| `vecinos` / `grado` / `peso_entre` | O(1) de acceso + O(grado) del escaneo |
+| `construir_grafo` desde catálogo | **O(V²)** comparaciones (aceptable con V ≤ 100; alternativa futura: indexar por género/estudio) |
+| Memoria | **O(V + E)** |
+
+### 11.5 Conclusión técnica
+
+- **Por qué un grafo y no un árbol:** el árbol modela *jerarquías* (un juego pertenece a una categoría), pero las relaciones entre juegos son **muchas a muchos** (un juego puede compartir género con decenas y estudio con otros): solo un grafo las representa sin inventar restricciones artificiales.
+- **Por qué lista de adyacencia:** dispersión esperada — con V = 100 y E ≈ cientos, la matriz gastaría ~10.000 celdas (90%+ vacías) y escanearía filas completas para listar vecinos.
+- **Testing:** `tests/test_grafo.py` (12 tests): simetría de aristas, lazos prohibidos, actualización de peso, grado/vecinos, y la integración de dominio (género/estudio, fórmula del peso, orden por afinidad).

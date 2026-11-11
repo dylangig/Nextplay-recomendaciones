@@ -62,6 +62,40 @@ class SistemaUI:
         print(" ─────────────────────────────────")
         print(f" Fuente: MaxHeap (heapify O(K) + {len(top)} extracciones O(log K))\n")
 
+    def _menu_grafo(self):
+        """Submenú de consultas sobre el grafo de relaciones (TP7/TP8)."""
+        while True:
+            print("\n         RED DE RELACIONES (grafo)")
+            print("1. Ver juegos relacionados con uno dado")
+            print("0. Volver al menú principal")
+            subopcion = input("Opción: ")
+
+            if subopcion == '1':
+                self._mostrar_relacionados()
+            elif subopcion == '0':
+                break
+            else:
+                print("\n Opción no válida.\n")
+
+    def _mostrar_relacionados(self):
+        """Vecinos del grafo: comparten género o estudio, ordenados por afinidad."""
+        titulo = input("> Título del juego: ").strip()
+        juego = self._catalogo.buscar_por_titulo(titulo)
+        if juego is None:
+            print(f"\n No existe ningún juego llamado '{titulo}'.\n")
+            return
+        relacionados = self._recomendador.juegos_relacionados(juego)
+        if not relacionados:
+            print(f"\n '{juego.get_titulo()}' no tiene juegos relacionados.\n")
+            return
+        print(f"\n Juegos relacionados con '{juego.get_titulo()}' "
+              f"(comparten género o estudio):")
+        for vecino, peso in relacionados:
+            afinidad = peso * 100
+            print(f" - {vecino}   afinidad {afinidad:.0f}%")
+        print(f"\n ({len(relacionados)} conexiones · grafo no dirigido, "
+              f"peso = 1/(1+|Δrating|))\n")
+
     def _explorar_categorias(self):
         arbol = self._obtener_arbol_general()
         while True:
@@ -133,6 +167,7 @@ class SistemaUI:
         print("9. Vaciar catálogo")
         print("10. Top N mejores evaluados (heap)")
         print("11. Explorar categorías (árbol general)")
+        print("12. Juegos relacionados (grafo)")
         print("0. Salir")
 
     def iniciar(self):
@@ -239,6 +274,9 @@ class SistemaUI:
 
             elif opcion == '11':
                 self._explorar_categorias()
+
+            elif opcion == '12':
+                self._menu_grafo()
 
             elif opcion == '0':
                 print("\nSaliendo de NextPlay... ¡Hasta luego!")
