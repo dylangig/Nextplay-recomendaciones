@@ -388,4 +388,66 @@ Opción **12. Juegos relacionados (grafo)**:
 
 - **Por qué un grafo y no un árbol:** el árbol modela *jerarquías* (un juego pertenece a una categoría), pero las relaciones entre juegos son **muchas a muchos** (un juego puede compartir género con decenas y estudio con otros): solo un grafo las representa sin inventar restricciones artificiales.
 - **Por qué lista de adyacencia:** dispersión esperada — con V = 100 y E ≈ cientos, la matriz gastaría ~10.000 celdas (90%+ vacías) y escanearía filas completas para listar vecinos.
-- **Testing:** `tests/test_grafo.py` (12 tests): simetría de aristas, lazos prohibidos, actualización de peso, grado/vecinos, y la integración de dominio (género/estudio, fórmula del peso, orden por afinidad).
+- **Testing:** `tests/test_grafo.py` (20 tests): simetría de aristas, lazos prohibidos, actualización de peso, grado/vecinos, integración de dominio (género/estudio, fórmula del peso, orden por afinidad) y los recorridos BFS/DFS del TP8.
+
+## 12. BFS y DFS: explorar la red de relaciones
+
+### 12.1 Los dos recorridos implementados
+
+Ambos recorren el grafo completo desde un origen en **O(V + E)**, pero con distinta estrategia y para distintas preguntas.
+
+| | **BFS** (por niveles) | **DFS** (en profundidad) |
+|---|---|---|
+| **Estructura** | **Cola** (`deque`, FIFO) — entra por el final, sale por el frente | **Pila** (LIFO, explícita) — entra y sale por el tope |
+| **Orden** | Visita primero los vecinos, luego los vecinos de los vecinos (por distancia creciente) | Desciende por una rama completa antes que pasar a la hermana |
+| **Descubre** | El camino con **menos aristas** a cada vértice | Recorre en profundidad una componente antes de retroceder |
+| **Memoria** | O(anchura máxima del nivel) — puede ser grande en grafos muy ramificados | O(profundidad máxima de la rama) |
+| **Complejidad** | **O(V + E)** | **O(V + E)** |
+
+Ambos usan un conjunto de **visitados** para no repetir vértices (fundamental en grafos con ciclos). La implementación está en `algoritmos/grafo.py::bfs()` y `::dfs()`; los recorridos devuelven `[]` si el origen no existe.
+
+### 12.2 Caso de uso con BFS — *"¿cuál es el juego relacionado más cercano a X?"*
+
+**Por qué BFS:** en un grafo **no dirigido con aristas sin peso en el recorrido** (la distancia se mide en cantidad de conexiones), BFS garantiza que la primera vez que visita un vértice lo hace por un camino **con el mínimo número de aristas**. Es exactamente la definición de "más cercano".
+
+- Implementación: `Recomendador.juego_mas_cercano()` ejecuta `bfs(origen)` (devuelve `(vértice, distancia)` ordenado por distancia) y toma el primer nivel alcanzado; **en empate de distancia gana el de mayor rating** (criterio de calidad del sistema).
+- Salida real en la terminal (opción 12 → 2):
+
+```
+ BFS desde 'Hades':
+   El más cercano es 'Slay the Spire'
+   a 1 arista(s) de distancia (camino más corto).
+   Slay the Spire (Roguelike) - Estudio: Mega Crit  9.4
+```
+
+### 12.3 Caso de uso con DFS — *"explorar toda la red conectada con X"*
+
+**Por qué DFS:** cuando la pregunta no es "cuán cerca" sino **"qué hay en toda esta red"**, DFS desciende en profundidad y cubre la componente entera siguiendo ramas, como quien explora un mapa desde un punto. Ideal para listar/explorar un subconjunto completo de conexiones.
+
+- Implementación: `Recomendador.explorar_red()` → `grafo.dfs(origen)` devuelve la **componente conexa** alcanzable en orden de visita.
+- Salida real (opción 12 → 3):
+
+```
+ DFS desde 'Hades' — red conectada (8 juegos):
+    1. Hades (Roguelike) - Estudio: Supergiant Games  9.8
+    2. Dead Cells (Roguelike) - Estudio: Motion Twin  8.9
+    3. Slay the Spire (Roguelike) - Estudio: Mega Crit  9.4
+    ...
+    8. Spelunky (Roguelike) - Estudio: Mossmouth  9.0
+```
+
+### 12.4 ¿Cuándo conviene cada uno?
+
+- **BFS:** preguntas de *distancia/cercanía*, camino más corto en aristas, niveles de separación ("amigos de amigos"), y cuando el grafo es "ancho y corto". Garantiza óptimo en número de aristas.
+- **DFS:** preguntas de *exploración y pertenencia* (¿a qué componente pertenece?), detección de ciclos, ordenamiento topológico y cuando importa seguir una rama hasta el final. Usa menos memoria si el grafo es profundo.
+- **En NextPlay:** BFS responde *el más cercano* (calidad de "pocos saltos"); DFS responde *explorar la red completa* (vista panorámica de las relaciones).
+
+### 12.5 Complejidad y análisis
+
+| Aspecto | Análisis |
+|---|---|
+| Tiempo | O(V + E) por recorrido: cada vértice se encola/apila una vez y cada arista se revisa una vez (en no dirigida, dos veces — una por extremo). |
+| Espacio | O(V) para `visitados` + la estructura viva (cola/pila). |
+| Con el grafo real (V=100) | Recorrido completo ≈ 100 + cientos de operaciones → **microsegundos**; irrelevante frente a la carga de datos. |
+| Escalabilidad | Si el dataset fuera 100× (V=10.000), seguiría siendo lineal: **100× datos ≈ 100× tiempo**, no cuadrático. A diferencia de la búsqueda lineal O(n) del TP2, aquí el costo crece con aristas, no con pares. |
+| Diferencia clave con el árbol | En un árbol hay un único camino a cada nodo (no hace falta `visitados`); en un grafo pueden existir múltiples caminos y ciclos, por eso el conjunto de visitados es obligatorio. |

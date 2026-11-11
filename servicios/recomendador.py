@@ -89,3 +89,35 @@ class Recomendador:
         grafo = self.construir_grafo()
         vecinos = grafo.vecinos(juego)
         return sorted(vecinos, key=lambda par: par[1], reverse=True)
+
+    def juego_mas_cercano(self, juego: Videojuego):
+        """El juego conectado más cercano a `juego` vía BFS (menos aristas).
+
+        Implementa la consulta del TP8: "¿cuál es el juego relacionado más
+        cercano a X?". BFS garantiza que el primer nivel alcanzado es el
+        de distancia mínima; si hay empate en la distancia, gana el de
+        mayor rating (criterio de calidad del sistema).
+
+        Returns:
+            (juego, distancia) o None si no tiene conexiones.
+        """
+        grafo = self.construir_grafo()
+        recorrido = grafo.bfs(juego)
+        if len(recorrido) <= 1:  # solo el origen: sin vecinos
+            return None
+        distancia_minima = recorrido[1][1]
+        candidatos = [
+            vertice for vertice, distancia in recorrido
+            if distancia == distancia_minima
+        ]
+        mas_cercano = max(candidatos, key=lambda j: j.get_rating())
+        return mas_cercano, distancia_minima
+
+    def explorar_red(self, juego: Videojuego) -> List[Videojuego]:
+        """Toda la red conectada con `juego` en profundidad (DFS). O(V + E).
+
+        TP8: "explorar todos los juegos relacionados con X en profundidad".
+        Devuelve los vértices de la componente conexa en orden de visita DFS.
+        """
+        grafo = self.construir_grafo()
+        return grafo.dfs(juego)
