@@ -67,15 +67,59 @@ class SistemaUI:
         while True:
             print("\n         RED DE RELACIONES (grafo)")
             print("1. Ver juegos relacionados con uno dado")
+            print("2. Juego relacionado más cercano (BFS)")
+            print("3. Explorar toda la red en profundidad (DFS)")
             print("0. Volver al menú principal")
             subopcion = input("Opción: ")
 
             if subopcion == '1':
                 self._mostrar_relacionados()
+            elif subopcion == '2':
+                self._mostrar_mas_cercano()
+            elif subopcion == '3':
+                self._mostrar_exploracion_dfs()
             elif subopcion == '0':
                 break
             else:
                 print("\n Opción no válida.\n")
+
+    def _juego_ingresado(self):
+        """Pide un título y devuelve el juego del catálogo (o None + aviso)."""
+        titulo = input("> Título del juego: ").strip()
+        juego = self._catalogo.buscar_por_titulo(titulo)
+        if juego is None:
+            print(f"\n No existe ningún juego llamado '{titulo}'.\n")
+        return juego
+
+    def _mostrar_mas_cercano(self):
+        """Consulta BFS: el juego conectado a menos aristas de distancia."""
+        juego = self._juego_ingresado()
+        if juego is None:
+            return
+        resultado = self._recomendador.juego_mas_cercano(juego)
+        if resultado is None:
+            print(f"\n '{juego.get_titulo()}' no tiene juegos conectados.\n")
+            return
+        cercano, distancia = resultado
+        print(f"\n BFS desde '{juego.get_titulo()}':")
+        print(f"   El más cercano es '{cercano.get_titulo()}'")
+        print(f"   a {distancia} arista(s) de distancia (camino más corto).")
+        print(f"   {cercano}\n")
+
+    def _mostrar_exploracion_dfs(self):
+        """Consulta DFS: exploración en profundidad de toda la componente."""
+        juego = self._juego_ingresado()
+        if juego is None:
+            return
+        recorrido = self._recomendador.explorar_red(juego)
+        if not recorrido:
+            print(f"\n '{juego.get_titulo()}' no tiene juegos conectados.\n")
+            return
+        print(f"\n DFS desde '{juego.get_titulo()}' — red conectada "
+              f"({len(recorrido)} juegos):")
+        for paso, vecino in enumerate(recorrido, start=1):
+            print(f"   {paso:2d}. {vecino}")
+        print()
 
     def _mostrar_relacionados(self):
         """Vecinos del grafo: comparten género o estudio, ordenados por afinidad."""

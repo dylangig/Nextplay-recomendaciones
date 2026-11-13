@@ -13,6 +13,7 @@ recorridos, frente a O(V²) de la matriz de adyacencia.
 
 from __future__ import annotations
 
+from collections import deque
 from typing import Dict, List, Optional, Tuple, TypeVar
 
 V = TypeVar("V")
@@ -102,3 +103,60 @@ class Grafo:
     def cantidad_aristas(self) -> int:
         """Total de aristas (cada una aparece dos veces en la lista). O(V)."""
         return sum(len(vecinos) for vecinos in self._adyacencia.values()) // 2
+
+    # ------------------------------------------------------------------
+    # Recorridos (TP8)
+    # ------------------------------------------------------------------
+    def bfs(self, origen: V) -> List[Tuple[V, int]]:
+        """Recorrido por niveles (BFS) con cola. Complejidad: O(V + E).
+
+        Visita primero los vecinos de `origen`, luego los vecinos de los
+        vecinos, etc. Devuelve **(vértice, distancia en aristas)** en orden
+        de descubrimiento: la lista está ordenada por distancia creciente,
+        por eso el elemento [1:] empieza por los más cercanos.
+
+        Returns:
+            Lista [(vértice, distancia), ...]; [(origen, 0)] si está aislado;
+            [] si el vértice no existe.
+        """
+        if not self.tiene_vertice(origen):
+            return []
+        visitados = {origen}
+        cola = deque([(origen, 0)])
+        recorrido: List[Tuple[V, int]] = []
+        while cola:
+            vertice, distancia = cola.popleft()
+            recorrido.append((vertice, distancia))
+            for vecino, _ in self._adyacencia[vertice]:
+                if vecino not in visitados:
+                    visitados.add(vecino)
+                    cola.append((vecino, distancia + 1))
+        return recorrido
+
+    def dfs(self, origen: V) -> List[V]:
+        """Recorrido en profundidad (DFS) con pila explícita. O(V + E).
+
+        Desciende por una rama antes que pasar a la hermana (útil para
+        "explorar en profundidad" toda la red conectada). Usa pila y
+        conjunto de visitados para no repetir vértices.
+
+        Returns:
+            Lista de vértices alcanzables en orden de visita (incluye
+            `origen`); [] si el vértice no existe.
+        """
+        if not self.tiene_vertice(origen):
+            return []
+        visitados = set()
+        pila = [origen]
+        recorrido: List[V] = []
+        while pila:
+            vertice = pila.pop()
+            if vertice in visitados:
+                continue
+            visitados.add(vertice)
+            recorrido.append(vertice)
+            # Se apilan en orden inverso para visitarlos en el orden de la lista.
+            for vecino, _ in reversed(self._adyacencia[vertice]):
+                if vecino not in visitados:
+                    pila.append(vecino)
+        return recorrido

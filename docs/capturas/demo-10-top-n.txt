@@ -1,0 +1,43 @@
+ Se cargaron 100 juegos exitosamente.
+
+         NEXTPLAY — TERMINAL          
+1. Buscar videojuego por título
+2. Filtrar videojuegos por género
+3. Listar todos los videojuegos
+4. Buscar por título (árbol AVL)
+5. Listar en orden alfabético (recorrido inorden)
+6. Agregar videojuego
+7. Eliminar videojuego
+8. Guardar catálogo a archivo (preorden)
+9. Vaciar catálogo
+10. Top N mejores evaluados (heap)
+11. Explorar categorías (árbol general)
+12. Juegos relacionados (grafo)
+0. Salir
+Opción: > ¿Cuántos juegos mostramos? (Enter para 10): 
+         TOP 5 — MEJOR EVALUADOS
+ ─────────────────────────────────
+ 🥇 Hades                                    ⭐ 9.8
+ 🥈 Baldur's Gate 3                          ⭐ 9.8
+ 🥉 The Legend of Zelda: Ocarina of Time     ⭐ 9.8
+  4. The Legend of Zelda: Breath of the Wild  ⭐ 9.7
+  5. The Witcher 3: Wild Hunt                 ⭐ 9.7
+ ─────────────────────────────────
+ Fuente: MaxHeap (heapify O(K) + 5 extracciones O(log K))
+
+         NEXTPLAY — TERMINAL          
+1. Buscar videojuego por título
+2. Filtrar videojuegos por género
+3. Listar todos los videojuegos
+4. Buscar por título (árbol AVL)
+5. Listar en orden alfabético (recorrido inorden)
+6. Agregar videojuego
+7. Eliminar videojuego
+8. Guardar catálogo a archivo (preorden)
+9. Vaciar catálogo
+10. Top N mejores evaluados (heap)
+11. Explorar categorías (árbol general)
+12. Juegos relacionados (grafo)
+0. Salir
+Opción: 
+Saliendo de NextPlay... ¡Hasta luego!

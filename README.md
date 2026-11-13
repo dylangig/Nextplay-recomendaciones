@@ -3,7 +3,7 @@
 > Trabajo Practico Integrador -- Estructuras de Datos (UNaB)
 > Aplicacion de consola para la busqueda, filtrado y recomendacion eficiente de videojuegos utilizando estructuras de datos avanzadas.
 >
-> Version del entregable: **v5 (TP7 -- Grafo de relaciones)**
+> Version del entregable: **v6 (TP8 -- BFS / DFS)**
 
 ---
 
@@ -111,7 +111,9 @@ Nextplay-recomendaciones/
 | [docs/03-diagrama-clases.md](docs/03-diagrama-clases.md) | Clases de dominio y estructuras, con relaciones |
 | [docs/04-diagrama-datos.md](docs/04-diagrama-datos.md) | Conexión entre estructuras (flujo de datos) |
 | [docs/05-gestion-proyecto.md](docs/05-gestion-proyecto.md) | Tablero, sprints e historias de usuario |
+| [docs/06-defensa.md](docs/06-defensa.md) | Guion de la defensa (Demo Day) y preguntas típicas |
 | [docs/Informe.md](docs/Informe.md) | Análisis de complejidad, benchmarks y experimentos |
+| [docs/capturas/](docs/capturas/) | Transcripciones reales de la demo en terminal |
 
 ---
 
@@ -123,3 +125,4 @@ TP 4 - Arbol AVL: rotaciones, balanceo y experimento de desbalance.
 TP 5 - Arbol general (n-ario): jerarquia de generos, recorridos y explorador de categorias en terminal (version 3).
 TP 6 - Heap (cola de prioridad): MaxHeap manual, ranking Top-N por rating con el servicio Recomendador (version 4).
 TP 7 - Grafo de relaciones: no dirigido y pesado (comparten genero o estudio), lista de adyacencia, consulta de juegos relacionados (version 5).
+TP 8 - BFS y DFS: juego mas cercano (BFS) y exploracion en profundidad de la red (DFS), con analisis de complejidad O(V+E) (version 6).

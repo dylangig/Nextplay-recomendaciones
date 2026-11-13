@@ -1,0 +1,109 @@
+ Se cargaron 100 juegos exitosamente.
+
+         NEXTPLAY — TERMINAL          
+1. Buscar videojuego por título
+2. Filtrar videojuegos por género
+3. Listar todos los videojuegos
+4. Buscar por título (árbol AVL)
+5. Listar en orden alfabético (recorrido inorden)
+6. Agregar videojuego
+7. Eliminar videojuego
+8. Guardar catálogo a archivo (preorden)
+9. Vaciar catálogo
+10. Top N mejores evaluados (heap)
+11. Explorar categorías (árbol general)
+12. Juegos relacionados (grafo)
+0. Salir
+Opción: 
+         EXPLORAR CATEGORÍAS
+1. Ver jerarquía completa (con cantidad de juegos)
+2. Buscar categoría (muestra la ruta)
+3. Recorrido por niveles (BFS)
+4. Recorrido preorden (DFS)
+5. Ver juegos de una categoría
+0. Volver al menú principal
+Opción: 
+ Jerarquía de categorías (juegos del catálogo entre paréntesis):
+Videojuegos (100 juegos)
+├── Acción (22 juegos)
+│   ├── Acción-aventura (14 juegos)
+│   ├── Hack and slash (2 juegos)
+│   ├── Sigilo (3 juegos)
+│   ├── Lucha (1 juegos)
+│   └── Run and gun (1 juegos)
+├── Shooter (9 juegos)
+│   ├── FPS (8 juegos)
+│   └── Battle royale (1 juegos)
+├── Rol (25 juegos)
+│   ├── RPG (12 juegos)
+│   ├── Action RPG (6 juegos)
+│   ├── JRPG (6 juegos)
+│   └── RPG táctico (1 juegos)
+├── Aventura (17 juegos)
+│   ├── Metroidvania (9 juegos)
+│   ├── Survival horror (5 juegos)
+│   └── Immersive sim (2 juegos)
+├── Estrategia (3 juegos)
+│   ├── Estrategia por turnos (1 juegos)
+│   └── Estrategia táctica (1 juegos)
+├── Plataformas (7 juegos)
+├── Puzzle (4 juegos)
+├── Roguelike (8 juegos)
+├── Simulación (4 juegos)
+│   └── Sandbox (2 juegos)
+└── Deportes (1 juegos)
+
+
+         EXPLORAR CATEGORÍAS
+1. Ver jerarquía completa (con cantidad de juegos)
+2. Buscar categoría (muestra la ruta)
+3. Recorrido por niveles (BFS)
+4. Recorrido preorden (DFS)
+5. Ver juegos de una categoría
+0. Volver al menú principal
+Opción: > Categoría a buscar: 
+ Ruta: Videojuegos > Aventura > Metroidvania
+
+
+         EXPLORAR CATEGORÍAS
+1. Ver jerarquía completa (con cantidad de juegos)
+2. Buscar categoría (muestra la ruta)
+3. Recorrido por niveles (BFS)
+4. Recorrido preorden (DFS)
+5. Ver juegos de una categoría
+0. Volver al menú principal
+Opción: > Categoría: 
+ Juegos en 'Videojuegos > Roguelike' (8):
+ - Dead Cells (Roguelike) - Estudio: Motion Twin  8.9
+ - Hades (Roguelike) - Estudio: Supergiant Games  9.8
+ - Slay the Spire (Roguelike) - Estudio: Mega Crit  9.4
+ - Balatro (Roguelike) - Estudio: LocalThunk  9.3
+ - Vampire Survivors (Roguelike) - Estudio: poncle  8.9
+ - The Binding of Isaac: Rebirth (Roguelike) - Estudio: Edmund McMillen  9.0
+ - Risk of Rain 2 (Roguelike) - Estudio: Hopoo Games  8.8
+ - Spelunky (Roguelike) - Estudio: Mossmouth  9.0
+
+
+         EXPLORAR CATEGORÍAS
+1. Ver jerarquía completa (con cantidad de juegos)
+2. Buscar categoría (muestra la ruta)
+3. Recorrido por niveles (BFS)
+4. Recorrido preorden (DFS)
+5. Ver juegos de una categoría
+0. Volver al menú principal
+Opción:          NEXTPLAY — TERMINAL          
+1. Buscar videojuego por título
+2. Filtrar videojuegos por género
+3. Listar todos los videojuegos
+4. Buscar por título (árbol AVL)
+5. Listar en orden alfabético (recorrido inorden)
+6. Agregar videojuego
+7. Eliminar videojuego
+8. Guardar catálogo a archivo (preorden)
+9. Vaciar catálogo
+10. Top N mejores evaluados (heap)
+11. Explorar categorías (árbol general)
+12. Juegos relacionados (grafo)
+0. Salir
+Opción: 
+Saliendo de NextPlay... ¡Hasta luego!

@@ -42,7 +42,7 @@
 └─────────────────────┘   └──────────────────────┘   └─────────────────────┘
 
 ┌────────────────────────┐   ┌───────────────────────────────┐
-│  MaxHeap               │   │  Grafo  (TP7)                 │
+│  MaxHeap               │   │  Grafo                    │
 │  estructuras/heap.py   │   │  algoritmos/grafo.py          │
 ├────────────────────────┤   ├───────────────────────────────┤
 │ - _datos: list         │   │ - _adyacencia: dict           │
@@ -50,8 +50,8 @@
 ├────────────────────────┤   │ + agregar_vertice(v)          │
 │ + push(x) / pop()      │   │ + agregar_arista(a, b, peso)  │
 │ + peek() / size()      │   │ + vecinos(v)                  │
-│ + is_empty()           │   │ + bfs(origen)  [TP8]         │
-│ + heapify(items, key)  │   │ + dfs(origen)   [TP8]         │
+│ + is_empty()           │   │ + bfs(origen) → (v, dist)  │
+│ + heapify(items, key)  │   │ + dfs(origen) → orden      │
 │ + _sift_up / _sift_down│   └───────────────────────────────┘
 └────────────────────────┘
 ```
@@ -62,7 +62,7 @@
 | `ArbolAVL` | BST balanceado por título | **Búsqueda principal** del catálogo dinámico (TP4) |
 | `ArbolGeneral` | Jerarquía n-aría de categorías | Explorar categorías con conteos (TP5) |
 | `MaxHeap` | Cola de prioridad por rating | Ranking Top-N sin ordenar (TP6) |
-| `Grafo` | Relaciones entre juegos | Juegos relacionados + BFS/DFS (TP7/TP8) |
+| `Grafo` | Relaciones entre juegos | Juegos relacionados + BFS/DFS |
 
 ## 3. Servicios y UI (`servicios/`, `ui/`)
 
@@ -75,14 +75,16 @@
 ├────────────────────────────┤         │ - _recomendador: Recomendador│
 │ + obtener_top_n(n)         │         │ - _arbol: ArbolAVL           │
 │   O(K + n log K)           │         │ - _arbol_general: ArbolGeneral│
-└────────────────────────────┘         │ - _grafo: Grafo  (TP7)       │
-                                       ├──────────────────────────────┤
-                                       │ + mostrar_menu() / iniciar() │
-                                       │ + _mostrar_top_n()           │
-                                       │ + _explorar_categorias()     │
-                                       │ + _juegos_relacionados() (TP7)│
+│ + construir_grafo()        │         ├──────────────────────────────┤
+│ + juegos_relacionados(j)   │         │ + mostrar_menu() / iniciar() │
+│ + juego_mas_cercano(j) BFS │         │ + _mostrar_top_n()           │
+│ + explorar_red(j)      DFS │         │ + _explorar_categorias()     │
+└────────────────────────────┘         │ + _menu_grafo() / BFS / DFS  │
                                        └──────────────────────────────┘
 ```
+
+> El grafo **no se guarda** en la UI: `Recomendador.construir_grafo()` lo
+> reconstruye en cada consulta (catálogo chico y dinámico; ver §4 de `04-diagrama-datos.md`).
 
 ## 4. Relaciones entre clases (Mermaid)
 
