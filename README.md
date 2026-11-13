@@ -3,7 +3,7 @@
 > Trabajo Practico Integrador -- Estructuras de Datos (UNaB)
 > Aplicacion de consola para la busqueda, filtrado y recomendacion eficiente de videojuegos utilizando estructuras de datos avanzadas.
 >
-> Version del entregable: **v4 (TP6 -- Heap / Top-N)**
+> Version del entregable: **v5 (TP7 -- Grafo de relaciones)**
 
 ---
 
@@ -72,6 +72,7 @@ Nextplay-recomendaciones/
 │   ├── arbol.py            # arbol binario de busqueda (BST)
 │   ├── arbol_avl.py        # arbol AVL (busqueda con balanceo)
 │   ├── arbol_general.py    # arbol general n-ario (jerarquia de categorias)
+│   ├── grafo.py            # grafo no dirigido pesado (lista de adyacencia)
 │   └── generar_datos.py    # generacion de catalogos sinteticos para benchmarking
 ├── estructuras/
 │   └── heap.py             # MaxHeap manual (sin heapq) para rankings
@@ -85,7 +86,8 @@ Nextplay-recomendaciones/
 │   ├── benchmark.py            # benchmark de las estrategias de busqueda
 │   ├── experimento_desbalance.py  # experimento BST vs. AVL
 │   ├── test_arbol_general.py   # tests unitarios del arbol general
-│   └── test_heap.py            # tests unitarios de la heap y el Top-N
+│   ├── test_heap.py            # tests unitarios de la heap y el Top-N
+│   └── test_grafo.py           # tests unitarios del grafo y relacionados
 ├── docs/
 │   ├── 01-requerimientos.md    # requerimientos funcionales y no funcionales
 │   ├── 02-casos-de-uso.md      # diagrama y descripcion de casos de uso
@@ -120,3 +122,4 @@ TP 3 - Implemetancion de Arbol de busqueda
 TP 4 - Arbol AVL: rotaciones, balanceo y experimento de desbalance.
 TP 5 - Arbol general (n-ario): jerarquia de generos, recorridos y explorador de categorias en terminal (version 3).
 TP 6 - Heap (cola de prioridad): MaxHeap manual, ranking Top-N por rating con el servicio Recomendador (version 4).
+TP 7 - Grafo de relaciones: no dirigido y pesado (comparten genero o estudio), lista de adyacencia, consulta de juegos relacionados (version 5).
