@@ -4,13 +4,15 @@ from pathlib import Path
 from algoritmos.arbol_avl import ArbolAVL
 from algoritmos.arbol_general import arbol_por_defecto
 from modelos.videojuego import Videojuego
+from servicios.recomendador import Recomendador
 
 RUTA_GUARDADO = Path(__file__).resolve().parent.parent / "datos" / "juegos_preorden.json"
 
 
 class SistemaUI:
-    def __init__(self, catalogo):
+    def __init__(self, catalogo, recomendador=None):
         self._catalogo = catalogo
+        self._recomendador = recomendador or Recomendador(catalogo)
         self._arbol = None
         self._arbol_general = None
 
@@ -33,6 +35,32 @@ class SistemaUI:
             j for j in self._catalogo.listar_todos()
             if j.get_genero().casefold() in generos
         ]
+
+    def _mostrar_top_n(self):
+        """Ranking Top-N con la MaxHeap (prioridad = rating)."""
+        entrada = input("> ¿Cuántos juegos mostramos? (Enter para 10): ").strip()
+        try:
+            n = int(entrada) if entrada else 10
+        except ValueError:
+            print("\n Ingrese un número entero válido.\n")
+            return
+        if n <= 0:
+            print("\n El tamaño del ranking debe ser mayor a 0.\n")
+            return
+
+        top = self._recomendador.obtener_top_n(n)
+        if not top:
+            print("\n El catálogo está vacío.\n")
+            return
+
+        medallas = {1: "🥇", 2: "🥈", 3: "🥉"}
+        print(f"\n         TOP {len(top)} — MEJOR EVALUADOS")
+        print(" ─────────────────────────────────")
+        for posicion, juego in enumerate(top, start=1):
+            prefijo = medallas.get(posicion, f"{posicion:2d}.")
+            print(f" {prefijo} {juego.get_titulo():<40} ⭐ {juego.get_rating():.1f}")
+        print(" ─────────────────────────────────")
+        print(f" Fuente: MaxHeap (heapify O(K) + {len(top)} extracciones O(log K))\n")
 
     def _explorar_categorias(self):
         arbol = self._obtener_arbol_general()
@@ -103,7 +131,8 @@ class SistemaUI:
         print("7. Eliminar videojuego")
         print("8. Guardar catálogo a archivo (preorden)")
         print("9. Vaciar catálogo")
-        print("10. Explorar categorías (árbol general)")
+        print("10. Top N mejores evaluados (heap)")
+        print("11. Explorar categorías (árbol general)")
         print("0. Salir")
 
     def iniciar(self):
@@ -206,6 +235,9 @@ class SistemaUI:
                     print("\n Operación cancelada.\n")
 
             elif opcion == '10':
+                self._mostrar_top_n()
+
+            elif opcion == '11':
                 self._explorar_categorias()
 
             elif opcion == '0':
