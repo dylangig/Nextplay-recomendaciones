@@ -14,7 +14,7 @@ Trabajamos con un **Scrum simplificado** adaptado al calendario de la cátedra:
 
 ### Tablero
 
-🔗 **GitHub Projects:** _[pegar aquí el link del tablero — ver sección 3]_
+🔗 **GitHub Projects:** [NextPlay — Tablero de entregas](https://github.com/users/dylangig/projects/2)
 
 Columnas mínimas: **Backlog → En progreso → En revisión → Hecho**.
 
@@ -43,6 +43,7 @@ Columnas mínimas: **Backlog → En progreso → En revisión → Hecho**.
 
 ## 4. Evidencia del uso del tablero
 
-- Cada TP tiene su **branch** (`feature/tp_N`) y su **PR** en GitHub: `#4` (TP2), `#5` (TP3), `#6` (TP5), etc.
+- **Tablero GitHub Projects activo** con una tarjeta por historia de usuario (issues #10–#19): TP1–TP8 y Documentación en **Hecho**, *Defensa final* en **En progreso**.
+- Cada TP tiene su **branch** (`feature/tp_N`) y su **PR** en GitHub: `#7` (TP6), `#8` (TP7), `#9` (TP8), etc.
 - El historial de commits refleja la evolución incremental (no está todo subido de una sola vez).
 - El `main` se mantiene funcional en cada entrega (verificado con `python -m unittest discover -s tests`).
